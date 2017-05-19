@@ -1,6 +1,15 @@
 <resources>
-    <string name="app_name">Bodyfat App</string>
+    <string name="app_name">Bodyfat Log</string>
     <string name="action_settings">Settings</string>
     <string name="three_measure_option">3 Measure</string>
     <string name="five_measure_option">5 Measure</string>
+    <string name="measure_one">Measure One</string>
+    <string name="measure_two">Measure Two</string>
+    <string name="measure_three">Measure Three</string>
+    <string name="measure_four">Measure Four</string>
+    <string name="measure_five">Measure Five</string>
+    <string name="log_button_text">Log</string>
+    <string name="pref_gender">Gender</string>
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
 </resources>
