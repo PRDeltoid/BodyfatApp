@@ -5,12 +5,13 @@
     <item
         android:orderInCategory="100"
         android:title="@string/three_measure_option"
-        android:icon="@drawable/ic_add_box_black_24dp"
+        android:icon="@drawable/ic_looks_3_black_24dp"
         app:showAsAction="ifRoom"/>
     <item
         android:orderInCategory="101"
         android:title="@string/five_measure_option"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_looks_5_black_24dp"
+        app:showAsAction="ifRoom" />
 
      <item
         android:id="@+id/action_settings"
