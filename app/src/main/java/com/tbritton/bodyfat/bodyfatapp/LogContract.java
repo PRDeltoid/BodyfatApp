@@ -7,6 +7,7 @@ public final class LogContract {
 
     public static class LogEntry implements BaseColumns {
         public static final String TABLE_NAME="log";
+        public static final String COLUMN_NAME_GENDER="gender";
         public static final String COLUMN_NAME_DATETIME="date";
         public static final String COLUMN_NAME_AGE="age";
         public static final String COLUMN_NAME_WEIGHT="weight";

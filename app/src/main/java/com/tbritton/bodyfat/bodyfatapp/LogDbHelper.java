@@ -14,8 +14,9 @@ public class LogDbHelper extends SQLiteOpenHelper {
                     LogContract.LogEntry.COLUMN_NAME_AGE + " INTEGER NOT NULL," +
                     LogContract.LogEntry.COLUMN_NAME_DATETIME + " DATETIME," +
                     LogContract.LogEntry.COLUMN_NAME_FOLDSUM + " INTEGER NOT NULL," +
-                    LogContract.LogEntry.COLUMN_NAME_FOLDTYPE + " TEXT," +
-                    LogContract.LogEntry.COLUMN_NAME_WEIGHT + " REAL NOT NULL)";
+                    LogContract.LogEntry.COLUMN_NAME_FOLDTYPE + " TEXT NOT NULL," +
+                    LogContract.LogEntry.COLUMN_NAME_WEIGHT + " REAL NOT NULL," +
+                    LogContract.LogEntry.COLUMN_NAME_GENDER + " TEXT NOT NULL)";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + LogContract.LogEntry.TABLE_NAME;
