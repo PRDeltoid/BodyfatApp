@@ -13,5 +13,6 @@ public final class LogContract {
         public static final String COLUMN_NAME_WEIGHT="weight";
         public static final String COLUMN_NAME_FOLDSUM="foldsum";
         public static final String COLUMN_NAME_FOLDTYPE="foldtype";
+        public static final String COLUMN_NAME_CALCULATE_BODYFAT="calculate_bodyfat";
     }
 }

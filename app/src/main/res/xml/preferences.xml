@@ -6,5 +6,4 @@
         android:entries="@array/pref_gender_values"
         android:entryValues="@array/pref_gender_values"
         android:defaultValue="@string/gender_male"/>
-
 </PreferenceScreen>
