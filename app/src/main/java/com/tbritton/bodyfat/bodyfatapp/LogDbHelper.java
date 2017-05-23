@@ -48,6 +48,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
         values.put(LogContract.LogEntry.COLUMN_NAME_AGE,      log_entry.get_age());
         values.put(LogContract.LogEntry.COLUMN_NAME_SEX,      log_entry.get_sex());
         values.put(LogContract.LogEntry.COLUMN_NAME_WEIGHT,   log_entry.get_weight());
+        values.put(LogContract.LogEntry.COLUMN_NAME_DATETIME, log_entry.get_date());
 
         //Insert information into the database
         db.insert(LogContract.LogEntry.TABLE_NAME, null, values);
