@@ -29,13 +29,11 @@ public class LogDbHelper extends SQLiteOpenHelper {
 
     public LogDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mDbHelper = new LogDbHelper(context);
     }
 
     static void log(Context application_context, LogEntry log_entry) {
         //Open our database
-        if(mDbHelper==null) {
-            mDbHelper = new LogDbHelper(application_context);
-        }
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         //Create a ContentValues variable to store our database information
@@ -67,5 +65,3 @@ public class LogDbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 }
-
-
