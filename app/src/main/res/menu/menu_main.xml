@@ -3,11 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.tbritton.bodyfat.bodyfatapp.MainActivity">
     <item
+        android:id="@+id/three_measure_action"
         android:orderInCategory="100"
         android:title="@string/three_measure_option"
         android:icon="@drawable/ic_looks_3_black_24dp"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/five_measure_action"
         android:orderInCategory="101"
         android:title="@string/five_measure_option"
         android:icon="@drawable/ic_looks_5_black_24dp"

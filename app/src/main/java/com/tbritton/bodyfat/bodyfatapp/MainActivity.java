@@ -1,5 +1,6 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,16 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if (id == R.id.three_measure_action) {
+            Intent threeMeasureIntent = new Intent(getApplicationContext(), ThreeMeasure.class);
+            startActivity(threeMeasureIntent);
+            return true;
+        }
+
+        if (id == R.id.five_measure_action) {
             return true;
         }
 

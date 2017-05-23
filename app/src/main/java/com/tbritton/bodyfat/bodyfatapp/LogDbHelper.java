@@ -13,7 +13,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + LogContract.LogEntry.TABLE_NAME + " (" +
                     LogContract.LogEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     LogContract.LogEntry.COLUMN_NAME_AGE + " INTEGER NOT NULL," +
-                    LogContract.LogEntry.COLUMN_NAME_DATETIME + " DATETIME," +
+                    LogContract.LogEntry.COLUMN_NAME_DATETIME + " DATETIME DEFAULT CURRENT_TIMESTAMP," +
                     LogContract.LogEntry.COLUMN_NAME_FOLDSUM + " INTEGER NOT NULL," +
                     LogContract.LogEntry.COLUMN_NAME_FOLDTYPE + " INTEGER NOT NULL," +
                     LogContract.LogEntry.COLUMN_NAME_WEIGHT + " REAL NOT NULL," +
