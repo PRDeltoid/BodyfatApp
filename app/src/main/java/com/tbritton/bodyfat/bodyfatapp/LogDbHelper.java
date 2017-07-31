@@ -2,10 +2,22 @@ package com.tbritton.bodyfat.bodyfatapp;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Pair;
 import android.widget.Toast;
+
+import com.jjoe64.graphview.series.DataPoint;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.util.Pair.create;
 
 public class LogDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
@@ -30,6 +42,59 @@ public class LogDbHelper extends SQLiteOpenHelper {
 
     public LogDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    //Pull recent 10 logs to display as a graph
+    static ArrayList<DataPoint> pull_weights(Context context){
+        if(mDbHelper == null) {
+            mDbHelper = new LogDbHelper(context);
+        }
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String[] projection = {
+                LogContract.LogEntry.COLUMN_NAME_BODYFAT,
+                LogContract.LogEntry.COLUMN_NAME_DATETIME
+        };
+
+        String selection = "*";
+        String[] selection_args = {"*"};
+        String sort_order = LogContract.LogEntry.COLUMN_NAME_DATETIME + " DESC";
+        Cursor cursor = db.query(
+                LogContract.LogEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+
+        DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        //Create an array to store our graph points
+        ArrayList<DataPoint> graph_points = new ArrayList<>();
+        //Iterate through our cursor and store our graph points as pairs
+        DataPoint graph_point = null;
+        String datetime;
+        double bodyfat;
+        while (cursor.moveToNext()) {
+            try {
+                //Get the data
+                datetime = cursor.getString(
+                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
+                bodyfat = cursor.getDouble(
+                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_BODYFAT));
+                graph_point = new DataPoint(date_formatter.parse(datetime), bodyfat);
+            } catch(Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+            //Create our graph point pair
+            graph_points.add(graph_point);
+        }
+        //Release cursor resources
+        cursor.close();
+        return graph_points;
+
     }
 
     static void log(Context context, LogEntry log_entry) {

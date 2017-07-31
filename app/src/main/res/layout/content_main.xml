@@ -8,4 +8,13 @@
     tools:context="com.tbritton.bodyfat.bodyfatapp.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        app:seriesColor="@color/colorAccent"
+        android:id="@+id/graph" />
+
 </android.support.constraint.ConstraintLayout>

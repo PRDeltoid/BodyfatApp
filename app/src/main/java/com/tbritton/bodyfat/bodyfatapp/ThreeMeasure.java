@@ -14,7 +14,8 @@ import java.util.Date;
 public class ThreeMeasure extends AppCompatActivity {
     EditText measure_one_text,
              measure_two_text,
-             measure_three_text;
+             measure_three_text,
+             weight_text;
     Button   log_button;
     final int MEASURE_TYPE = 3;
 
@@ -27,6 +28,7 @@ public class ThreeMeasure extends AppCompatActivity {
         measure_one_text   = (EditText) findViewById(R.id.measure_1_text);
         measure_two_text   = (EditText) findViewById(R.id.measure_2_text);
         measure_three_text = (EditText) findViewById(R.id.measure_3_text);
+        weight_text        = (EditText) findViewById(R.id.weight_text);
         log_button = (Button) findViewById(R.id.three_measure_log_button);
 
         //Create an action for the log button
@@ -52,7 +54,7 @@ public class ThreeMeasure extends AppCompatActivity {
         //Temporary hardcoded variables
         //These will be moved to Settings later
         int age = 25;
-        double weight = 200.0;
+        double weight = Integer.parseInt(weight_text.getText().toString()); //200.0;
 
         //Generate a date for the log
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
