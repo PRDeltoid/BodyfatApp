@@ -1,12 +1,11 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
+import android.app.ListActivity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,9 +14,6 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,15 +55,18 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.list_view) {
+            Intent intent = new Intent(this, ListViewActivity.class);
+            startActivity(intent);
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
     public void setup_graph() {
         //Pull our data
-        ArrayList<DataPoint> arrlist_points = LogDbHelper.pull_weights(getApplicationContext());
-        DataPoint data_points[] = new DataPoint[arrlist_points.size()];
-        data_points = arrlist_points.toArray(data_points);
+        LogContainer log = LogDbHelper.pull_log(getApplicationContext());
+        DataPoint data_points[] = log.as_datapoints();
 
         //Draw our bodyfat graph
         GraphView graph = (GraphView) findViewById(R.id.graph);

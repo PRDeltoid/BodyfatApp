@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="15dp">
+
+    <TextView
+        android:id="@+id/date"
+        android:duplicateParentState="true"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:layout_height="@dimen/list_subitem_height"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:hint="Date (12/12/2012)"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/colorPrimary" />
+    <TextView
+        android:id="@+id/weight"
+        android:duplicateParentState="true"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:layout_alignParentRight="true"
+        android:layout_height="@dimen/list_subitem_height"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:hint="200 lb"
+        android:textColor="@color/colorPrimary" />
+    <TextView
+        android:id="@+id/bodyfat"
+        android:duplicateParentState="true"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:layout_height="@dimen/list_subitem_height"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:hint="18%"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/weight"
+        android:textColor="@color/colorPrimary" />
+
+</RelativeLayout>

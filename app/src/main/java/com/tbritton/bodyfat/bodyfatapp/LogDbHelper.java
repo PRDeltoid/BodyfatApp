@@ -44,20 +44,26 @@ public class LogDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    //Pull recent 10 logs to display as a graph
-    static ArrayList<DataPoint> pull_weights(Context context){
+    //Pulls all log entries as a LogContainer object
+    static LogContainer pull_log(Context context){
+        LogContainer log = new LogContainer();
         if(mDbHelper == null) {
             mDbHelper = new LogDbHelper(context);
         }
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
-                LogContract.LogEntry.COLUMN_NAME_BODYFAT,
-                LogContract.LogEntry.COLUMN_NAME_DATETIME
+            LogContract.LogEntry.COLUMN_NAME_DATETIME,
+            LogContract.LogEntry.COLUMN_NAME_BODYFAT,
+            LogContract.LogEntry.COLUMN_NAME_AGE,
+            LogContract.LogEntry.COLUMN_NAME_FOLDSUM,
+            LogContract.LogEntry.COLUMN_NAME_FOLDTYPE,
+            LogContract.LogEntry.COLUMN_NAME_SEX,
+            LogContract.LogEntry.COLUMN_NAME_WEIGHT
         };
 
-        String selection = "*";
-        String[] selection_args = {"*"};
-        String sort_order = LogContract.LogEntry.COLUMN_NAME_DATETIME + " DESC";
+        //String selection = "*";
+        //String[] selection_args = {"*"};
+        //String sort_order = LogContract.LogEntry.COLUMN_NAME_DATETIME + " DESC";
         Cursor cursor = db.query(
                 LogContract.LogEntry.TABLE_NAME,
                 projection,
@@ -68,32 +74,43 @@ public class LogDbHelper extends SQLiteOpenHelper {
                 null
         );
 
-
         DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        //Create an array to store our graph points
-        ArrayList<DataPoint> graph_points = new ArrayList<>();
-        //Iterate through our cursor and store our graph points as pairs
-        DataPoint graph_point = null;
-        String datetime;
-        double bodyfat;
+        String datetime,
+                sex;
+        double  weight;
+        int     age,
+                sum,
+                foldtype;
+
+        //Iterate through our cursor
         while (cursor.moveToNext()) {
             try {
                 //Get the data
                 datetime = cursor.getString(
-                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
-                bodyfat = cursor.getDouble(
-                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_BODYFAT));
-                graph_point = new DataPoint(date_formatter.parse(datetime), bodyfat);
+                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
+                age      = cursor.getInt(
+                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
+                sum      = cursor.getInt(
+                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDSUM));
+                foldtype = cursor.getInt(
+                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE));
+                sex      = cursor.getString(
+                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_SEX));
+                weight   = cursor.getDouble(
+                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
+
+                //Create a log entry and insert it into our log
+                LogEntry log_entry = new LogEntry(age, sum, foldtype, sex, weight, date_formatter.parse(datetime).toString());
+                log.add(log_entry);
+
             } catch(Exception e) {
                 e.printStackTrace();
                 return null;
             }
-            //Create our graph point pair
-            graph_points.add(graph_point);
         }
         //Release cursor resources
         cursor.close();
-        return graph_points;
+        return log;
 
     }
 

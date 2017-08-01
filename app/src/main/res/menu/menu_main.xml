@@ -4,6 +4,13 @@
     tools:context="com.tbritton.bodyfat.bodyfatapp.MainActivity">
 
      <item
+         android:id="@+id/list_view"
+         android:icon="@android:drawable/ic_menu_edit"
+         android:orderInCategory="101"
+         android:title="List View"
+         android:tint="@color/white"
+         app:showAsAction="ifRoom" />
+     <item
         android:id="@+id/action_settings"
         android:orderInCategory="102"
         android:title="@string/action_settings"
