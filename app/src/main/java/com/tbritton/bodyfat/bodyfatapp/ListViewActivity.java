@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,8 +30,19 @@ public class ListViewActivity extends AppCompatActivity {
 
         weight_log = LogDbHelper.pull_log(getApplicationContext()).as_arraylist();
 
+        //Create an adapter for our data
         ListViewAdapter adapter = new ListViewAdapter();
         listview.setAdapter(adapter);
+
+        //Create item click listener event (placeholder)
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selected = Integer.toString(position);
+                Toast toast = Toast.makeText(getApplicationContext(), selected, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
     }
 
     private String convert_to_nice_date(String datestring) {
@@ -60,7 +73,7 @@ public class ListViewActivity extends AppCompatActivity {
 
         @Override
         public long getItemId(int position) {
-            return weight_log.get(position).hashCode();
+            return position; //weight_log.get(position).hashCode();
         }
 
         @Override
@@ -74,7 +87,6 @@ public class ListViewActivity extends AppCompatActivity {
 
             //Convert date to a more readable format
             String date = convert_to_nice_date(log_entry.get_date());
-
 
             ((TextView) convertView.findViewById(R.id.date))
                     .setText(date);
