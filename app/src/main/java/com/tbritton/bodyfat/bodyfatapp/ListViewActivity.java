@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class ListViewActivity extends AppCompatActivity {
             ((TextView) convertView.findViewById(R.id.date))
                     .setText(date);
             ((TextView) convertView.findViewById(R.id.bodyfat))
-                    .setText(Double.toString(log_entry.get_bodyfat_percent())+"%");
+                    .setText(new DecimalFormat("#.##").format(log_entry.get_bodyfat_percent())+"%");
             ((TextView) convertView.findViewById(R.id.weight))
                     .setText(Double.toString(log_entry.get_weight())+" lb");
 
