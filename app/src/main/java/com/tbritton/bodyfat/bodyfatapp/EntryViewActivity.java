@@ -19,7 +19,6 @@ public class EntryViewActivity extends AppCompatActivity {
              measure_two_text,
              measure_three_text,
              weight_text;
-    Button   log_button;
     final int MEASURE_TYPE = 3;
     int entry_id;
 
@@ -53,12 +52,12 @@ public class EntryViewActivity extends AppCompatActivity {
         int measure_three = Integer.parseInt(measure_three_text.getText().toString());
 
         //Calculate sum
-        int sum = measure_one + measure_two + measure_three;
+        int[] folds = {measure_one, measure_two, measure_three};
 
         //Temporary hardcoded variables
         //These will be moved to Settings later
         int age = 25;
-        double weight = Integer.parseInt(weight_text.getText().toString()); //200.0;
+        double weight = Integer.parseInt(weight_text.getText().toString());
 
         //Generate a date for the log
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -66,7 +65,7 @@ public class EntryViewActivity extends AppCompatActivity {
         String date = dateFormatter.format(new Date());
 
         //Create our log entry to give to our logger
-        LogEntry log_entry = new LogEntry(age, sum, MEASURE_TYPE, "Male", weight, date);
+        LogEntry log_entry = new LogEntry(age, folds, MEASURE_TYPE, "Male", weight, date);
         LogDbHelper.log(getApplicationContext(), log_entry);
     }
 

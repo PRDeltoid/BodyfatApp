@@ -11,7 +11,7 @@ public final class LogContract {
         public static final String COLUMN_NAME_DATETIME="date";
         public static final String COLUMN_NAME_AGE="age";
         public static final String COLUMN_NAME_WEIGHT="weight";
-        public static final String COLUMN_NAME_FOLDSUM="foldsum";
+        public static final String COLUMN_NAME_FOLDMEASURES="foldmeasures";
         public static final String COLUMN_NAME_FOLDTYPE="foldtype";
         public static final String COLUMN_NAME_BODYFAT="bodyfat";
     }

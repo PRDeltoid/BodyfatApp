@@ -20,7 +20,7 @@ import java.util.List;
 import static android.util.Pair.create;
 
 public class LogDbHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "log.db";
 
     private static final String SQL_CREATE_ENTRIES =
@@ -28,7 +28,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
                     LogContract.LogEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     LogContract.LogEntry.COLUMN_NAME_AGE + " INTEGER NOT NULL," +
                     LogContract.LogEntry.COLUMN_NAME_DATETIME + " DATETIME DEFAULT CURRENT_TIMESTAMP," +
-                    LogContract.LogEntry.COLUMN_NAME_FOLDSUM + " INTEGER NOT NULL," +
+                    LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES + " TEXT NOT NULL," +
                     LogContract.LogEntry.COLUMN_NAME_FOLDTYPE + " INTEGER NOT NULL," +
                     LogContract.LogEntry.COLUMN_NAME_WEIGHT + " REAL NOT NULL," +
                     LogContract.LogEntry.COLUMN_NAME_SEX + " TEXT NOT NULL," +
@@ -55,7 +55,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
             LogContract.LogEntry.COLUMN_NAME_DATETIME,
             LogContract.LogEntry.COLUMN_NAME_BODYFAT,
             LogContract.LogEntry.COLUMN_NAME_AGE,
-            LogContract.LogEntry.COLUMN_NAME_FOLDSUM,
+            LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES,
             LogContract.LogEntry.COLUMN_NAME_FOLDTYPE,
             LogContract.LogEntry.COLUMN_NAME_SEX,
             LogContract.LogEntry.COLUMN_NAME_WEIGHT
@@ -76,10 +76,10 @@ public class LogDbHelper extends SQLiteOpenHelper {
 
         DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
         String datetime,
-                sex;
+                sex,
+                folds_string;
         double  weight;
         int     age,
-                sum,
                 foldtype;
 
         //Iterate through our cursor
@@ -90,8 +90,8 @@ public class LogDbHelper extends SQLiteOpenHelper {
                             cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
                 age      = cursor.getInt(
                             cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
-                sum      = cursor.getInt(
-                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDSUM));
+                folds_string    = cursor.getString(
+                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES));
                 foldtype = cursor.getInt(
                             cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE));
                 sex      = cursor.getString(
@@ -99,8 +99,10 @@ public class LogDbHelper extends SQLiteOpenHelper {
                 weight   = cursor.getDouble(
                             cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
 
+
+                int folds[] = parse_fold_string(folds_string);
                 //Create a log entry and insert it into our log
-                LogEntry log_entry = new LogEntry(age, sum, foldtype, sex, weight, date_formatter.parse(datetime).toString());
+                LogEntry log_entry = new LogEntry(age, folds, foldtype, sex, weight, date_formatter.parse(datetime).toString());
                 log.add(log_entry);
 
             } catch(Exception e) {
@@ -124,7 +126,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
                 LogContract.LogEntry.COLUMN_NAME_DATETIME,
                 LogContract.LogEntry.COLUMN_NAME_BODYFAT,
                 LogContract.LogEntry.COLUMN_NAME_AGE,
-                LogContract.LogEntry.COLUMN_NAME_FOLDSUM,
+                LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES,
                 LogContract.LogEntry.COLUMN_NAME_FOLDTYPE,
                 LogContract.LogEntry.COLUMN_NAME_SEX,
                 LogContract.LogEntry.COLUMN_NAME_WEIGHT
@@ -150,8 +152,8 @@ public class LogDbHelper extends SQLiteOpenHelper {
                     cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
             int age      = cursor.getInt(
                     cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
-            int sum      = cursor.getInt(
-                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDSUM));
+            String folds_string = cursor.getString(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES));
             int foldtype = cursor.getInt(
                     cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE));
             String sex      = cursor.getString(
@@ -160,8 +162,9 @@ public class LogDbHelper extends SQLiteOpenHelper {
                     cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
 
             DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            int folds[] = parse_fold_string(folds_string);
             //Create a log entry and insert it into our log
-            log_entry = new LogEntry(age, sum, foldtype, sex, weight, date_formatter.parse(datetime).toString());
+            log_entry = new LogEntry(age, folds, foldtype, sex, weight, date_formatter.parse(datetime).toString());
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -194,7 +197,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         //Store the database information!
-        values.put(LogContract.LogEntry.COLUMN_NAME_FOLDSUM,  log_entry.get_sum());
+        values.put(LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES,  log_entry.get_folds_string());
         values.put(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE, log_entry.get_foldtype());
         values.put(LogContract.LogEntry.COLUMN_NAME_BODYFAT,  log_entry.get_bodyfat_percent());
         values.put(LogContract.LogEntry.COLUMN_NAME_AGE,      log_entry.get_age());
@@ -212,6 +215,14 @@ public class LogDbHelper extends SQLiteOpenHelper {
         }
         //Successfully logged the bodyweight
         Toast.makeText(context, "Logged.", Toast.LENGTH_SHORT).show();
+    }
+
+    static int[] parse_fold_string(String folds_string) {
+        String[] s = folds_string.split(",");
+        int[] numbers = new int[s.length];
+        for (int curr = 0; curr < s.length; curr++)
+            numbers[curr] = Integer.parseInt(s[curr]);
+        return numbers;
     }
 
     @Override

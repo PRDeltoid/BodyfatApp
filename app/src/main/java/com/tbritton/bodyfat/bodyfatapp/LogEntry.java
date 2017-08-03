@@ -1,9 +1,15 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
+
+import java.util.Arrays;
+
 public class LogEntry {
-    public LogEntry(int age, int sum, int foldtype, String sex, double weight, String date) {
+    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, String date) {
+
+        int sum = get_foldsum(folds);
+
         this.age      = age;
-        this.sum      = sum;
+        this.folds    = folds;
         this.foldtype = foldtype;
         this.sex      = sex;
         this.weight   = weight;
@@ -12,8 +18,8 @@ public class LogEntry {
     }
 
     private int     age,
-                    foldtype,
-                    sum;
+                    foldtype;
+    private int[]   folds;
     private String  sex,
                     date;
     private double  weight,
@@ -27,8 +33,24 @@ public class LogEntry {
         return foldtype;
     }
 
-    public int get_sum() {
+    public int[] get_folds() {
+        return folds;
+    }
+
+    public int get_foldsum(int[] folds) {
+        int sum = 0;
+        for (int f : folds)
+            sum += f;
         return sum;
+    }
+
+    public String get_folds_string() {
+        String folds_string = "";
+        for(int f : folds) {
+           folds_string += (Integer.toString(f) + ",");
+        }
+
+        return folds_string;
     }
 
     public String get_sex() {
