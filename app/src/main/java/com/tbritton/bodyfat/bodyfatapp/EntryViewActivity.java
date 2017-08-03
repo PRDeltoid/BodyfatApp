@@ -13,7 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ThreeMeasure extends AppCompatActivity {
+public class EntryViewActivity extends AppCompatActivity {
     EditText measure_one_text,
              measure_two_text,
              measure_three_text,
@@ -24,7 +24,7 @@ public class ThreeMeasure extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_three_measure);
+        setContentView(R.layout.activity_entry_view);
 
         //Initialize toolbar
         Toolbar entry_toolbar = (Toolbar) findViewById(R.id.entry_toolbar);

@@ -10,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -40,7 +39,7 @@ public class ListViewActivity extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent single_entry_intent = new Intent(getApplicationContext(), ThreeMeasure.class);
+                Intent single_entry_intent = new Intent(getApplicationContext(), EntryViewActivity.class);
                 single_entry_intent.putExtra("EXTRA_ENTRYID",position);
                 startActivity(single_entry_intent);
             }

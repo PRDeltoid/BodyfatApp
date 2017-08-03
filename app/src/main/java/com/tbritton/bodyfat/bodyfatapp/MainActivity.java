@@ -1,6 +1,5 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
-import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent threeMeasureIntent = new Intent(getApplicationContext(), ThreeMeasure.class);
-                startActivity(threeMeasureIntent);
+                Intent entry_view_intent = new Intent(getApplicationContext(), EntryViewActivity.class);
+                startActivity(entry_view_intent);
             }
         });
     }

@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ThreeMeasure"
+            android:name=".EntryViewActivity"
             android:label="Three Measure Entry"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
