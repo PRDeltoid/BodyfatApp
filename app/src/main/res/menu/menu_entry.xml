@@ -4,16 +4,16 @@
     tools:context="com.tbritton.bodyfat.bodyfatapp.MainActivity">
 
      <item
-         android:id="@+id/list_view"
-         android:icon="@drawable/view_list"
+         android:id="@+id/action_save"
+         android:icon="@drawable/content_save_all"
          android:orderInCategory="101"
-         android:title="@string/action_view_log"
          android:tint="@color/white"
+         android:title="@string/action_save"
          app:showAsAction="ifRoom" />
      <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/settings"
+        android:id="@+id/action_delete"
+         android:icon="@drawable/delete"
         android:orderInCategory="102"
-        android:title="@string/action_settings"
+        android:title="@string/action_delete"
         app:showAsAction="ifRoom" />
 </menu>

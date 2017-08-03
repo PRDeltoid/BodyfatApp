@@ -1,5 +1,6 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,9 +40,9 @@ public class ListViewActivity extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selected = Integer.toString(position);
-                Toast toast = Toast.makeText(getApplicationContext(), selected, Toast.LENGTH_SHORT);
-                toast.show();
+                Intent single_entry_intent = new Intent(getApplicationContext(), ThreeMeasure.class);
+                single_entry_intent.putExtra("EXTRA_ENTRYID",position);
+                startActivity(single_entry_intent);
             }
         });
     }

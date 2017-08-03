@@ -114,6 +114,62 @@ public class LogDbHelper extends SQLiteOpenHelper {
 
     }
 
+    static LogEntry pull_entry(Context context, int entry_id) {
+        if(mDbHelper == null) {
+            mDbHelper = new LogDbHelper(context);
+        }
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String[] projection = {
+                LogContract.LogEntry.COLUMN_NAME_DATETIME,
+                LogContract.LogEntry.COLUMN_NAME_BODYFAT,
+                LogContract.LogEntry.COLUMN_NAME_AGE,
+                LogContract.LogEntry.COLUMN_NAME_FOLDSUM,
+                LogContract.LogEntry.COLUMN_NAME_FOLDTYPE,
+                LogContract.LogEntry.COLUMN_NAME_SEX,
+                LogContract.LogEntry.COLUMN_NAME_WEIGHT
+        };
+        String selection = LogContract.LogEntry._ID + " = " + entry_id;
+        //String[] selection_args = {"*"};
+        //String sort_order = LogContract.LogEntry.COLUMN_NAME_DATETIME + " DESC";
+        Cursor cursor = db.query(
+                LogContract.LogEntry.TABLE_NAME,
+                projection,
+                selection,
+                null,
+                null,
+                null,
+                null
+        );
+
+        LogEntry log_entry;
+
+        try {
+            //Get the data
+            String datetime = cursor.getString(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
+            int age      = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
+            int sum      = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDSUM));
+            int foldtype = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE));
+            String sex      = cursor.getString(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_SEX));
+            double weight   = cursor.getDouble(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
+
+            DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            //Create a log entry and insert it into our log
+            log_entry = new LogEntry(age, sum, foldtype, sex, weight, date_formatter.parse(datetime).toString());
+
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return log_entry;
+    }
+
     static void log(Context context, LogEntry log_entry) {
         if (mDbHelper == null) {
             mDbHelper = new LogDbHelper(context);
@@ -145,15 +201,18 @@ public class LogDbHelper extends SQLiteOpenHelper {
         Toast.makeText(context, "Logged.", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRIES);
     }
 
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(SQL_DELETE_ENTRIES);
         onCreate(db);
     }
 
+    @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
