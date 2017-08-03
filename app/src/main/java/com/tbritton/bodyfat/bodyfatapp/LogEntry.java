@@ -7,7 +7,7 @@ public class LogEntry {
         this.foldtype = foldtype;
         this.sex      = sex;
         this.weight   = weight;
-        this.bodyfat_percent = BodyfatCalcHelper.calculate(sum, foldtype, sex);
+        this.bodyfat  = BodyfatCalculator.calculate(sum, foldtype, age, sex);
         this.date     = date;
     }
 
@@ -17,7 +17,7 @@ public class LogEntry {
     private String  sex,
                     date;
     private double  weight,
-                    bodyfat_percent;
+                    bodyfat;
 
     public int get_age() {
         return age;
@@ -39,8 +39,8 @@ public class LogEntry {
         return weight;
     }
 
-    public double get_bodyfat_percent() {
-        return bodyfat_percent;
+    public double get_bodyfat_percent(){
+        return bodyfat;
     }
 
     public String get_date() {

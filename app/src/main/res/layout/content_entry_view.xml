@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.tbritton.bodyfat.bodyfatapp.ListViewActivity"
+    tools:showIn="@layout/activity_entry_view"
+    android:paddingTop="15dp"
+    android:paddingLeft="10dp">
+
+    <EditText
+        android:id="@+id/measure_1_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/measure_one"
+        android:inputType="number"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp" />
+
+    <EditText
+        android:id="@+id/measure_2_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/measure_two"
+        android:inputType="number"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/measure_1_text"
+        android:layout_marginStart="8dp" />
+
+    <EditText
+        android:id="@+id/measure_3_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="7dp"
+        android:ems="10"
+        android:hint="@string/measure_three"
+        android:inputType="number"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/measure_2_text"
+        android:layout_marginStart="8dp" />
+
+    <EditText
+        android:id="@+id/weight_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:hint="@string/weight"
+        android:inputType="number"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/measure_3_text"
+        android:layout_marginStart="8dp" />
+
+    </android.support.constraint.ConstraintLayout>

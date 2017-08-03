@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,39 +21,29 @@ public class EntryViewActivity extends AppCompatActivity {
              weight_text;
     Button   log_button;
     final int MEASURE_TYPE = 3;
+    int entry_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_view);
 
-        //Initialize toolbar
-        Toolbar entry_toolbar = (Toolbar) findViewById(R.id.entry_toolbar);
-        setSupportActionBar(entry_toolbar);
-
-        //Get the entry ID, if we're editing an existing entry
-        int entryid = getIntent().getIntExtra("EXTRA_ENTRYID", -1);
-        if(entryid == -1) {
-            LogDbHelper mDbHelper = new LogDbHelper(getApplicationContext());
-            LogEntry log_entry = mDbHelper.pull_entry(getApplicationContext(), entryid);
-        }
-
         //Assign components to variables
         measure_one_text   = (EditText) findViewById(R.id.measure_1_text);
         measure_two_text   = (EditText) findViewById(R.id.measure_2_text);
         measure_three_text = (EditText) findViewById(R.id.measure_3_text);
         weight_text        = (EditText) findViewById(R.id.weight_text);
-        log_button = (Button) findViewById(R.id.three_measure_log_button);
 
-        //Create an action for the log button
-        log_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                log();
-                Intent main_activity_intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(main_activity_intent);
-            }
-        });
+        //Initialize toolbar
+        Toolbar entry_toolbar = (Toolbar) findViewById(R.id.entry_toolbar);
+        setSupportActionBar(entry_toolbar);
+
+        //Get the entry ID, if we're editing an existing entry
+        entry_id = getIntent().getIntExtra("EXTRA_ENTRY_ID", -1);
+        if(entry_id != -1) {
+            //extra id was found
+            //need to load in entry information to the form
+        }
     }
 
     public void log() {
@@ -80,6 +71,13 @@ public class EntryViewActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_entry_view, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
@@ -91,6 +89,10 @@ public class EntryViewActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_delete:
+                LogDbHelper db = new LogDbHelper(getApplicationContext());
+                if(entry_id != -1) {
+                    db.delete_entry(getApplicationContext(), entry_id);
+                }
                 return true;
 
             default:

@@ -167,7 +167,20 @@ public class LogDbHelper extends SQLiteOpenHelper {
             e.printStackTrace();
             return null;
         }
+        cursor.close();
         return log_entry;
+    }
+
+    static void delete_entry(Context context, int entry_id) {
+        if(mDbHelper == null) {
+            mDbHelper = new LogDbHelper(context);
+        }
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        String[] entry_id_string = {Integer.toString(entry_id)};
+
+        db.delete(LogContract.LogEntry.TABLE_NAME, LogContract.LogEntry._ID + " = ?", entry_id_string);
+
     }
 
     static void log(Context context, LogEntry log_entry) {

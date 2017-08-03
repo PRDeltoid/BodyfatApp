@@ -19,6 +19,6 @@
 
 
 
-    <string name="title_activity_list_view">ListViewActivity</string>
-    <string name="title_activity_single_entry">SingleEntryActivity</string>
+    <string name="title_activity_list_view">Log</string>
+    <string name="title_activity_entry_view">Entry</string>
 </resources>
