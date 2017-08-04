@@ -22,6 +22,21 @@ import java.util.Date;
 public class ListViewActivity extends AppCompatActivity {
     ArrayList<LogEntry> weight_log;
 
+    //Convert from long date to short date for readability
+    private String convert_to_nice_date(String datestring) {
+        DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy");
+        DateFormat toFormat = new SimpleDateFormat("EEE MMM dd yyyy");
+
+        Date date = null;
+        try {
+            date = fromFormat.parse(datestring);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return toFormat.format(date);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,25 +58,10 @@ public class ListViewActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent single_entry_intent = new Intent(getApplicationContext(), EntryViewActivity.class);
-                single_entry_intent.putExtra("EXTRA_ENTRY_ID",position);
+                single_entry_intent.putExtra("EXTRA_ENTRY_ID", (int) id);
                 startActivity(single_entry_intent);
             }
         });
-    }
-
-    //Convert from long date to short date for readability
-    private String convert_to_nice_date(String datestring) {
-        DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy");
-        DateFormat toFormat = new SimpleDateFormat("EEE MMM dd yyyy");
-
-        Date date = null;
-        try {
-            date = fromFormat.parse(datestring);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return toFormat.format(date);
     }
 
     @Override
@@ -88,7 +88,8 @@ public class ListViewActivity extends AppCompatActivity {
         //Get list item id
         @Override
         public long getItemId(int position) {
-            return position;
+            return weight_log.get(position).get_database_index();
+            //return position;
         }
 
         //Creates the the individual list item view

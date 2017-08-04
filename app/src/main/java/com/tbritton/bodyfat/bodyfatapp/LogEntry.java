@@ -1,8 +1,6 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
 
-import java.util.Arrays;
-
 public class LogEntry {
     public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, String date) {
 
@@ -15,10 +13,25 @@ public class LogEntry {
         this.weight   = weight;
         this.bodyfat  = BodyfatCalculator.calculate(sum, foldtype, age, sex);
         this.date     = date;
+        this.database_index = -1;
+    }
+
+    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, String date, int index) {
+        int sum = get_foldsum(folds);
+
+        this.age      = age;
+        this.folds    = folds;
+        this.foldtype = foldtype;
+        this.sex      = sex;
+        this.weight   = weight;
+        this.bodyfat  = BodyfatCalculator.calculate(sum, foldtype, age, sex);
+        this.date     = date;
+        this.database_index = index;
     }
 
     private int     age,
-                    foldtype;
+                    foldtype,
+                    database_index;
     private int[]   folds;
     private String  sex,
                     date;
@@ -68,4 +81,6 @@ public class LogEntry {
     public String get_date() {
         return date;
     }
+
+    public int get_database_index() { return database_index; }
 }
