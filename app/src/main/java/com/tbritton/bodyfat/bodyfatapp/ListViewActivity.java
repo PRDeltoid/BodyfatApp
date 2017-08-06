@@ -36,7 +36,6 @@ public class ListViewActivity extends AppCompatActivity {
 
         //Pull our log data object
         populate_weight_log();
-        listview.refreshDrawableState();
 
         //Create an adapter for our data
         ListViewAdapter adapter = new ListViewAdapter();
@@ -105,6 +104,22 @@ public class ListViewActivity extends AppCompatActivity {
         return toFormat.format(date);
     }
 
+    private String convert_to_nice_time(String date_string) {
+        //Convert from long date to short date for readability
+        DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.US);
+        DateFormat toFormat = new SimpleDateFormat("kk:mm", Locale.US);
+
+        Date date = null;
+        try {
+            date = fromFormat.parse(date_string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return toFormat.format(date);
+
+    }
+
     private class ListViewAdapter extends BaseAdapter {
         //Code related to composing our list view
 
@@ -138,6 +153,7 @@ public class ListViewActivity extends AppCompatActivity {
 
             //Convert date to a more readable format
             String date    = convert_to_nice_date(log_entry.get_date());
+            String time    = convert_to_nice_time(log_entry.get_date());
             String bodyfat = new DecimalFormat("#.##").format(log_entry.get_bodyfat_percent()) + "%";
             String weight  = Double.toString(log_entry.get_weight()) + " lb";
 
@@ -147,6 +163,8 @@ public class ListViewActivity extends AppCompatActivity {
                     .setText(bodyfat);
             ((TextView) convertView.findViewById(R.id.weight))
                     .setText(weight);
+            ((TextView) convertView.findViewById(R.id.time))
+                    .setText(time);
 
             return convertView;
         }

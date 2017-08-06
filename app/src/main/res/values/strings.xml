@@ -22,5 +22,6 @@
     <string name="placeholder_weight">200 lb</string>
     <string name="placeholder_bodyfat">15.3%</string>
     <string name="placeholder_date">Date (12/12/2012)</string>
+    <string name="placeholder_time">10:30</string>
 
 </resources>
