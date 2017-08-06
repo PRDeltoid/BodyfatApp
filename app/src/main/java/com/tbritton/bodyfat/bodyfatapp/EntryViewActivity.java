@@ -1,70 +1,26 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class EntryViewActivity extends AppCompatActivity {
-    EditText measure_one_text,
+    private final int MEASURE_TYPE = 3;
+    private EditText measure_one_text,
              measure_two_text,
              measure_three_text,
              weight_text;
-    final int MEASURE_TYPE = 3;
-    int entry_id;
-
-
-    private LogEntry create_entry_object() {
-        //Get values from fields and convert them to integers using parseInt
-        int measure_one   = Integer.parseInt(measure_one_text.getText().toString());
-        int measure_two   = Integer.parseInt(measure_two_text.getText().toString());
-        int measure_three = Integer.parseInt(measure_three_text.getText().toString());
-
-        //Calculate sum
-        int[] folds = {measure_one, measure_two, measure_three};
-
-        //Temporary hardcoded variables
-        //These will be moved to Settings later
-        int age = 25;
-        double weight = Float.parseFloat(weight_text.getText().toString());
-
-        //Generate a date for the log
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        dateFormatter.setLenient(false);
-        String date = dateFormatter.format(new Date());
-
-        //Create our log entry to give to our logger
-        LogEntry log_entry = new LogEntry(age, folds, MEASURE_TYPE, "Male", weight, date);
-
-        return log_entry;
-    }
-
-    public void log() {
-        LogEntry log_entry = create_entry_object();
-        LogDbHelper.log(getApplicationContext(), log_entry);
-    }
-
-    public void update() {
-        entry_id = getIntent().getIntExtra("EXTRA_ENTRY_ID", -1);
-        //If an entry_id is present, we are in "Edit" mode and should
-        // update the entry instead of creating a new one
-        if(entry_id != -1) {
-            //Get the updated information
-            LogEntry log_entry = create_entry_object();
-            //Update it.
-            LogDbHelper.update_entry(getApplicationContext(), entry_id, log_entry);
-        }
-    }
+    private int entry_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,12 +43,7 @@ public class EntryViewActivity extends AppCompatActivity {
             //extra id was found
             //need to load in entry information to the form
             LogEntry entry = LogDbHelper.pull_entry(getApplicationContext(), entry_id);
-            int[] folds = entry.get_folds();
-            //temporary hardcode for the 3 measure case
-            measure_one_text.setText(Integer.toString(folds[0]));
-            measure_two_text.setText(Integer.toString(folds[1]));
-            measure_three_text.setText(Integer.toString(folds[2]));
-            weight_text.setText(Double.toString(entry.get_weight()));
+            setup_fields(entry);
         }
     }
 
@@ -105,7 +56,6 @@ public class EntryViewActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent list_view_activity_intent = new Intent(getApplicationContext(), ListViewActivity.class);
         switch (item.getItemId()) {
 
             //PLACEHOLDER
@@ -116,7 +66,8 @@ public class EntryViewActivity extends AppCompatActivity {
                     update();
                 }
 
-                startActivity(list_view_activity_intent);
+                setResult(RESULT_OK, null);
+                finish();
                 return true;
 
             case R.id.action_delete:
@@ -124,7 +75,8 @@ public class EntryViewActivity extends AppCompatActivity {
                 if(entry_id != -1) {
                     db.delete_entry(getApplicationContext(), entry_id);
                 }
-                startActivity(list_view_activity_intent);
+                setResult(RESULT_OK, null);
+                finish();
                 return true;
 
             default:
@@ -134,4 +86,63 @@ public class EntryViewActivity extends AppCompatActivity {
         }
     }
 
+    public static Intent get_start_intent(Context context, int entry_id) {
+        Intent intent = new Intent(context, EntryViewActivity.class);
+        intent.putExtra("EXTRA_ENTRY_ID", entry_id);
+        return intent;
+    }
+
+    private void log() {
+        LogEntry log_entry = create_entry_object();
+        LogDbHelper.log(getApplicationContext(), log_entry);
+    }
+
+    private void update() {
+        entry_id = getIntent().getIntExtra("EXTRA_ENTRY_ID", -1);
+        //If an entry_id is present, we are in "Edit" mode and should
+        // update the entry instead of creating a new one
+        if(entry_id != -1) {
+            //Get the updated information
+            LogEntry log_entry = create_entry_object();
+            //Update it.
+            LogDbHelper.update_entry(getApplicationContext(), entry_id, log_entry);
+        }
+    }
+
+    private LogEntry create_entry_object() {
+        //Get values from fields and convert them to integers using parseInt
+        int measure_one   = Integer.parseInt(measure_one_text.getText().toString());
+        int measure_two   = Integer.parseInt(measure_two_text.getText().toString());
+        int measure_three = Integer.parseInt(measure_three_text.getText().toString());
+
+        //Calculate sum
+        int[] folds = {measure_one, measure_two, measure_three};
+
+        //Temporary hardcoded variables
+        //These will be moved to Settings later
+        int age = 25;
+        double weight = Float.parseFloat(weight_text.getText().toString());
+
+        //Generate a date for the log
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US);
+        dateFormatter.setLenient(false);
+        String date = dateFormatter.format(new Date());
+
+        //Create our log entry to give to our logger
+        return new LogEntry(age, folds, MEASURE_TYPE, "Male", weight, date);
+    }
+
+    private void setup_fields(LogEntry log_entry) {
+        int[] folds;
+        try {
+            folds = log_entry.get_folds();
+        } catch(NullPointerException e) {
+            folds = new int[] {0,0,0};
+        }
+        double weight = log_entry.get_weight();
+        measure_one_text.setText(Integer.toString(folds[0]));
+        measure_two_text.setText(Integer.toString(folds[1]));
+        measure_three_text.setText(Integer.toString(folds[2]));
+        weight_text.setText(Double.toString(weight));
+    }
 }

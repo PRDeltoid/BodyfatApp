@@ -2,8 +2,16 @@ package com.tbritton.bodyfat.bodyfatapp;
 
 
 public class LogEntry {
-    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, String date) {
+    final private int     age,
+                          foldtype,
+                          database_index;
+    final private int[]   folds;
+    final private String  sex,
+                          date;
+    final private double  weight,
+                          bodyfat;
 
+    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, String date) {
         int sum = get_foldsum(folds);
 
         this.age      = age;
@@ -28,15 +36,6 @@ public class LogEntry {
         this.date     = date;
         this.database_index = index;
     }
-
-    private int     age,
-                    foldtype,
-                    database_index;
-    private int[]   folds;
-    private String  sex,
-                    date;
-    private double  weight,
-                    bodyfat;
 
     public int get_age() {
         return age;

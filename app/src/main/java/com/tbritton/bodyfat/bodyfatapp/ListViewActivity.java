@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -18,24 +19,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class ListViewActivity extends AppCompatActivity {
-    ArrayList<LogEntry> weight_log;
-
-    //Convert from long date to short date for readability
-    private String convert_to_nice_date(String datestring) {
-        DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy");
-        DateFormat toFormat = new SimpleDateFormat("EEE MMM dd yyyy");
-
-        Date date = null;
-        try {
-            date = fromFormat.parse(datestring);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return toFormat.format(date);
-    }
+    private ArrayList<LogEntry> weight_log;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +33,11 @@ public class ListViewActivity extends AppCompatActivity {
         final ListView listview = (ListView) findViewById(R.id.list_view);
 
         //Pull our log data object
-        weight_log = LogDbHelper.pull_log(getApplicationContext()).as_arraylist();
+        try {
+            weight_log = LogDbHelper.pull_log(getApplicationContext()).as_arraylist();
+        } catch(NullPointerException e) {
+            weight_log = new ArrayList<>();
+        }
 
         //Create an adapter for our data
         ListViewAdapter adapter = new ListViewAdapter();
@@ -57,8 +48,7 @@ public class ListViewActivity extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent single_entry_intent = new Intent(getApplicationContext(), EntryViewActivity.class);
-                single_entry_intent.putExtra("EXTRA_ENTRY_ID", (int) id);
+                Intent single_entry_intent = EntryViewActivity.get_start_intent(getApplicationContext(), (int) id);
                 startActivity(single_entry_intent);
             }
         });
@@ -69,6 +59,44 @@ public class ListViewActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_list_view, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_new_entry) {
+            Intent new_entry_intent = new Intent(getApplicationContext(), EntryViewActivity.class);
+            startActivityForResult(new_entry_intent, 1);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            Intent refresh = new Intent(this, ListViewActivity.class);
+            startActivity(refresh);
+            this.finish();
+        }
+    }
+
+    //Convert from long date to short date for readability
+    private String convert_to_nice_date(String date_string) {
+        DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.US);
+        DateFormat toFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
+
+        Date date = null;
+        try {
+            date = fromFormat.parse(date_string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return toFormat.format(date);
     }
 
     //Code related to composing our list view

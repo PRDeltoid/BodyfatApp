@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 
 public class LogDbHelper extends SQLiteOpenHelper {
@@ -30,6 +31,16 @@ public class LogDbHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + LogContract.LogEntry.TABLE_NAME;
 
+    private static final String[] ENTRY_PROJECTION =
+            {   LogContract.LogEntry._ID,
+                LogContract.LogEntry.COLUMN_NAME_DATETIME,
+                LogContract.LogEntry.COLUMN_NAME_BODYFAT,
+                LogContract.LogEntry.COLUMN_NAME_AGE,
+                LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES,
+                LogContract.LogEntry.COLUMN_NAME_FOLDTYPE,
+                LogContract.LogEntry.COLUMN_NAME_SEX,
+                LogContract.LogEntry.COLUMN_NAME_WEIGHT };
+
     //database helper singleton
     private static LogDbHelper mDbHelper = null;
 
@@ -37,30 +48,33 @@ public class LogDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(SQL_CREATE_ENTRIES);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(SQL_DELETE_ENTRIES);
+        onCreate(db);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        onUpgrade(db, oldVersion, newVersion);
+    }
+
     //Pulls all log entries as a LogContainer object
-    static LogContainer pull_log(Context context){
+    static public LogContainer pull_log(Context context){
         LogContainer log = new LogContainer();
         if(mDbHelper == null) {
             mDbHelper = new LogDbHelper(context);
         }
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String[] projection = {
-            LogContract.LogEntry._ID,
-            LogContract.LogEntry.COLUMN_NAME_DATETIME,
-            LogContract.LogEntry.COLUMN_NAME_BODYFAT,
-            LogContract.LogEntry.COLUMN_NAME_AGE,
-            LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES,
-            LogContract.LogEntry.COLUMN_NAME_FOLDTYPE,
-            LogContract.LogEntry.COLUMN_NAME_SEX,
-            LogContract.LogEntry.COLUMN_NAME_WEIGHT
-        };
 
-        //String selection = "*";
-        //String[] selection_args = {"*"};
-        //String sort_order = LogContract.LogEntry.COLUMN_NAME_DATETIME + " DESC";
         Cursor cursor = db.query(
                 LogContract.LogEntry.TABLE_NAME,
-                projection,
+                ENTRY_PROJECTION,
                 null,
                 null,
                 null,
@@ -68,7 +82,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
                 null
         );
 
-        DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US);
         String datetime,
                 sex,
                 folds_string;
@@ -82,20 +96,19 @@ public class LogDbHelper extends SQLiteOpenHelper {
             try {
                 //Get the data
                 datetime = cursor.getString(
-                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
+                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
                 age      = cursor.getInt(
-                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
+                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
                 folds_string    = cursor.getString(
-                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES));
+                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES));
                 foldtype = cursor.getInt(
-                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE));
+                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE));
                 sex      = cursor.getString(
-                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_SEX));
+                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_SEX));
                 weight   = cursor.getDouble(
-                            cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
+                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
                 index    = cursor.getInt(
-                            cursor.getColumnIndexOrThrow(LogContract.LogEntry._ID));
-
+                        cursor.getColumnIndexOrThrow(LogContract.LogEntry._ID));
 
                 int folds[] = parse_fold_string(folds_string);
                 //Create a log entry and insert it into our log
@@ -113,27 +126,16 @@ public class LogDbHelper extends SQLiteOpenHelper {
 
     }
 
-    static LogEntry pull_entry(Context context, int entry_id) {
+    static public LogEntry pull_entry(Context context, int entry_id) {
         if(mDbHelper == null) {
             mDbHelper = new LogDbHelper(context);
         }
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        String[] projection = {
-                LogContract.LogEntry.COLUMN_NAME_DATETIME,
-                LogContract.LogEntry.COLUMN_NAME_BODYFAT,
-                LogContract.LogEntry.COLUMN_NAME_AGE,
-                LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES,
-                LogContract.LogEntry.COLUMN_NAME_FOLDTYPE,
-                LogContract.LogEntry.COLUMN_NAME_SEX,
-                LogContract.LogEntry.COLUMN_NAME_WEIGHT
-        };
         String selection = LogContract.LogEntry._ID + " = " + entry_id;
-        //String[] selection_args = {"*"};
-        //String sort_order = LogContract.LogEntry.COLUMN_NAME_DATETIME + " DESC";
         Cursor cursor = db.query(
                 LogContract.LogEntry.TABLE_NAME,
-                projection,
+                ENTRY_PROJECTION,
                 selection,
                 null,
                 null,
@@ -159,7 +161,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
             double weight = cursor.getDouble(
                     cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
 
-            DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US);
             int folds[] = parse_fold_string(folds_string);
             //Create a log entry and insert it into our log
             log_entry = new LogEntry(age, folds, foldtype, sex, weight, date_formatter.parse(datetime).toString());
@@ -179,16 +181,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
         }
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        ContentValues values = new ContentValues();
-
-        //Store the database information!
-        values.put(LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES,  log_entry.get_folds_string());
-        values.put(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE, log_entry.get_foldtype());
-        values.put(LogContract.LogEntry.COLUMN_NAME_BODYFAT,  log_entry.get_bodyfat_percent());
-        values.put(LogContract.LogEntry.COLUMN_NAME_AGE,      log_entry.get_age());
-        values.put(LogContract.LogEntry.COLUMN_NAME_SEX,      log_entry.get_sex());
-        values.put(LogContract.LogEntry.COLUMN_NAME_WEIGHT,   log_entry.get_weight());
-        values.put(LogContract.LogEntry.COLUMN_NAME_DATETIME, log_entry.get_date());
+        ContentValues values = create_entry_content_values(log_entry);
 
         db.update(LogContract.LogEntry.TABLE_NAME, values, LogContract.LogEntry._ID + "=" + entry_id, null);
     }
@@ -212,7 +205,31 @@ public class LogDbHelper extends SQLiteOpenHelper {
         //Open our database
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        //Create a ContentValues variable to store our database information
+        long record_id = save_entry(db, log_entry);
+
+        if(record_id == -1) {
+            Toast.makeText(context, "Failed to Log", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Logged. ID: " + record_id, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //Returns the record ID if successful, -1 otherwise
+    static private long save_entry(SQLiteDatabase db, LogEntry log_entry) {
+        ContentValues values = create_entry_content_values(log_entry);
+
+        long record_id;
+        //Insert information into the database
+        try {
+            record_id = db.insertOrThrow(LogContract.LogEntry.TABLE_NAME, null, values);
+        } catch (SQLException sql_exception) {
+            //Failed to insert. Show error message and exit method
+            return -1;
+        }
+        return record_id;
+    }
+
+    static private ContentValues create_entry_content_values(LogEntry log_entry) {
         ContentValues values = new ContentValues();
 
         //Store the database information!
@@ -224,40 +241,14 @@ public class LogDbHelper extends SQLiteOpenHelper {
         values.put(LogContract.LogEntry.COLUMN_NAME_WEIGHT,   log_entry.get_weight());
         values.put(LogContract.LogEntry.COLUMN_NAME_DATETIME, log_entry.get_date());
 
-        long record_id;
-        //Insert information into the database
-        try {
-            record_id = db.insertOrThrow(LogContract.LogEntry.TABLE_NAME, null, values);
-        } catch (SQLException sql_exception) {
-            //Failed to insert. Show error message and exit method
-            Toast.makeText(context, "Failed to Log", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        //Successfully logged the bodyweight
-        Toast.makeText(context, "Logged." + record_id, Toast.LENGTH_SHORT).show();
+        return values;
     }
 
-    static int[] parse_fold_string(String folds_string) {
+    static private int[] parse_fold_string(String folds_string) {
         String[] s = folds_string.split(",");
         int[] numbers = new int[s.length];
         for (int curr = 0; curr < s.length; curr++)
             numbers[curr] = Integer.parseInt(s[curr]);
         return numbers;
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_ENTRIES);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(SQL_DELETE_ENTRIES);
-        onCreate(db);
-    }
-
-    @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
     }
 }

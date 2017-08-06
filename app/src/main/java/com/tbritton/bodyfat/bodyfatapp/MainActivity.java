@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setup_graph();
+        //setup_graph();
 
         //Create our Quick Log button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.quick_log);
@@ -31,9 +31,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent entry_view_intent = new Intent(getApplicationContext(), EntryViewActivity.class);
-                startActivity(entry_view_intent);
+                startActivityForResult(entry_view_intent, 1);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            Intent refresh = new Intent(this, MainActivity.class);
+            startActivity(refresh);
+            this.finish();
+        }
     }
 
     @Override
@@ -62,10 +72,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setup_graph() {
+    private void setup_graph() {
         //Pull our data
         LogContainer log = LogDbHelper.pull_log(getApplicationContext());
-        DataPoint data_points[] = log.as_datapoints();
+        DataPoint data_points[];
+        try {
+            data_points = log.as_datapoints();
+        } catch(NullPointerException e) {
+            data_points = new DataPoint[] {new DataPoint(0,0)};
+        }
 
         //Draw our bodyfat graph
         GraphView graph = (GraphView) findViewById(R.id.graph);

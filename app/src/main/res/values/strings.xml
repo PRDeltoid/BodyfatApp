@@ -4,13 +4,9 @@
     <string name="title_activity_list_view">Log</string>
     <string name="title_activity_entry_view">Entry</string>
 
-    <string name="three_measure_option">3 Measure</string>
-    <string name="five_measure_option">5 Measure</string>
     <string name="measure_one">Measure One</string>
     <string name="measure_two">Measure Two</string>
     <string name="measure_three">Measure Three</string>
-    <string name="measure_four">Measure Four</string>
-    <string name="measure_five">Measure Five</string>
 
     <string name="weight">Weight</string>
     <string name="pref_gender">Gender</string>
@@ -22,5 +18,9 @@
     <string name="action_delete">Delete</string>
     <string name="action_view_log">Log</string>
     <string name="action_new_entry">New</string>
+
+    <string name="placeholder_weight">200 lb</string>
+    <string name="placeholder_bodyfat">15.3%</string>
+    <string name="placeholder_date">Date (12/12/2012)</string>
 
 </resources>

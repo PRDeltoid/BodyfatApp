@@ -9,7 +9,8 @@
     tools:context="com.tbritton.bodyfat.bodyfatapp.ListViewActivity"
     tools:showIn="@layout/activity_entry_view"
     android:paddingTop="15dp"
-    android:paddingLeft="10dp">
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
 
     <EditText
         android:id="@+id/measure_1_text"
