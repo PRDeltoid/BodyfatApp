@@ -1,7 +1,7 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
 
-public class LogEntry {
+class LogEntry {
     final private int     age,
                           foldtype,
                           database_index;

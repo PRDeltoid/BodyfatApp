@@ -57,32 +57,28 @@ public class EntryViewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
-            //PLACEHOLDER
             case R.id.action_save:
                 if(entry_id == -1) {
                     log();
                 } else {
                     update();
                 }
-
-                setResult(RESULT_OK, null);
-                finish();
-                return true;
+                break;
 
             case R.id.action_delete:
                 if(entry_id != -1) {
                     LogDatabaseHelper.delete_entry(getApplicationContext(), entry_id);
                 }
-                setResult(RESULT_OK, null);
-                finish();
-                return true;
+                break;
 
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+        setResult(RESULT_OK, null);
+        finish();
+        return true;
     }
 
     public static Intent get_start_intent(Context context, int entry_id) {

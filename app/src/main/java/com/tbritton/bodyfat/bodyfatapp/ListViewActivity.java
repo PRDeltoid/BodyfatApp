@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class ListViewActivity extends AppCompatActivity {
+    private ListView listview;
     private ArrayList<LogEntry> weight_log;
 
     @Override
@@ -30,14 +32,11 @@ public class ListViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final ListView listview = (ListView) findViewById(R.id.list_view);
+        listview = (ListView) findViewById(R.id.list_view);
 
         //Pull our log data object
-        try {
-            weight_log = LogDatabaseHelper.pull_log(getApplicationContext()).as_arraylist();
-        } catch(NullPointerException e) {
-            weight_log = new ArrayList<>();
-        }
+        populate_weight_log();
+        listview.refreshDrawableState();
 
         //Create an adapter for our data
         ListViewAdapter adapter = new ListViewAdapter();
@@ -49,7 +48,7 @@ public class ListViewActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent single_entry_intent = EntryViewActivity.get_start_intent(getApplicationContext(), (int) id);
-                startActivity(single_entry_intent);
+                startActivityForResult(single_entry_intent, 1);
             }
         });
     }
@@ -77,10 +76,17 @@ public class ListViewActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK) {
-            Intent refresh = new Intent(this, ListViewActivity.class);
-            startActivity(refresh);
-            this.finish();
+        populate_weight_log();
+        BaseAdapter adapter = (BaseAdapter) listview.getAdapter();
+        adapter.notifyDataSetChanged();
+    }
+
+    private void populate_weight_log() {
+        try {
+            weight_log = LogDatabaseHelper.pull_log(getApplicationContext())
+                                          .as_arraylist();
+        } catch(NullPointerException e) {
+            weight_log = new ArrayList<>();
         }
     }
 
