@@ -84,8 +84,8 @@ public class ListViewActivity extends AppCompatActivity {
         }
     }
 
-    //Convert from long date to short date for readability
     private String convert_to_nice_date(String date_string) {
+        //Convert from long date to short date for readability
         DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.US);
         DateFormat toFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
 
@@ -99,8 +99,8 @@ public class ListViewActivity extends AppCompatActivity {
         return toFormat.format(date);
     }
 
-    //Code related to composing our list view
     private class ListViewAdapter extends BaseAdapter {
+        //Code related to composing our list view
 
         @Override
         public int getCount() {

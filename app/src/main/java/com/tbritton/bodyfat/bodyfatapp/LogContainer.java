@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-
 public class LogContainer {
     final private ArrayList<LogEntry> log;
 

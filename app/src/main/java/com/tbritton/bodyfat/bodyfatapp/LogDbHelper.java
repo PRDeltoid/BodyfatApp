@@ -12,7 +12,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-
 public class LogDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "log.db";
@@ -41,7 +40,6 @@ public class LogDbHelper extends SQLiteOpenHelper {
                 LogContract.LogEntry.COLUMN_NAME_SEX,
                 LogContract.LogEntry.COLUMN_NAME_WEIGHT };
 
-    //database helper singleton
     private static LogDbHelper mDbHelper = null;
 
     public LogDbHelper(Context context) {
@@ -64,112 +62,34 @@ public class LogDbHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    //Pulls all log entries as a LogContainer object
     static public LogContainer pull_log(Context context){
-        LogContainer log = new LogContainer();
-        if(mDbHelper == null) {
-            mDbHelper = new LogDbHelper(context);
-        }
+        //Pulls all log entries as a LogContainer object
+        acquire_instance(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        Cursor cursor = db.query(
-                LogContract.LogEntry.TABLE_NAME,
-                ENTRY_PROJECTION,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-
-        DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US);
-        String datetime,
-                sex,
-                folds_string;
-        double  weight;
-        int     age,
-                foldtype,
-                index;
+        Cursor cursor = create_cursor(db, null);
+        LogContainer log = new LogContainer();
 
         //Iterate through our cursor
         while (cursor.moveToNext()) {
-            try {
-                //Get the data
-                datetime = cursor.getString(
-                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
-                age      = cursor.getInt(
-                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
-                folds_string    = cursor.getString(
-                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES));
-                foldtype = cursor.getInt(
-                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE));
-                sex      = cursor.getString(
-                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_SEX));
-                weight   = cursor.getDouble(
-                        cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
-                index    = cursor.getInt(
-                        cursor.getColumnIndexOrThrow(LogContract.LogEntry._ID));
-
-                int folds[] = parse_fold_string(folds_string);
-                //Create a log entry and insert it into our log
-                LogEntry log_entry = new LogEntry(age, folds, foldtype, sex, weight, date_formatter.parse(datetime).toString(), index);
-                log.add(log_entry);
-
-            } catch(Exception e) {
-                e.printStackTrace();
-                return null;
-            }
+            LogEntry log_entry = create_entry_from_cursor(cursor);
+            log.add(log_entry);
         }
-        //Release cursor resources
+
         cursor.close();
         return log;
-
     }
 
     static public LogEntry pull_entry(Context context, int entry_id) {
-        if(mDbHelper == null) {
-            mDbHelper = new LogDbHelper(context);
-        }
+        acquire_instance(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String selection = LogContract.LogEntry._ID + " = " + entry_id;
-        Cursor cursor = db.query(
-                LogContract.LogEntry.TABLE_NAME,
-                ENTRY_PROJECTION,
-                selection,
-                null,
-                null,
-                null,
-                null
-        );
+        Cursor cursor = create_cursor(db, selection);
 
-        LogEntry log_entry;
-
-        try {
-            cursor.moveToNext();
-            //Get the data
-            String datetime = cursor.getString(
-                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
-            int age = cursor.getInt(
-                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
-            String folds_string = cursor.getString(
-                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES));
-            int foldtype = cursor.getInt(
-                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE));
-            String sex = cursor.getString(
-                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_SEX));
-            double weight = cursor.getDouble(
-                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
-
-            DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US);
-            int folds[] = parse_fold_string(folds_string);
-            //Create a log entry and insert it into our log
-            log_entry = new LogEntry(age, folds, foldtype, sex, weight, date_formatter.parse(datetime).toString());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        //Move cursor to first position, our entry
+        cursor.moveToNext();
+        LogEntry log_entry = create_entry_from_cursor(cursor);
 
         cursor.close();
         return log_entry;
@@ -187,9 +107,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
     }
 
     static void delete_entry(Context context, int entry_id) {
-        if(mDbHelper == null) {
-            mDbHelper = new LogDbHelper(context);
-        }
+        acquire_instance(context);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String[] entry_id_string = {Integer.toString(entry_id)};
@@ -214,8 +132,8 @@ public class LogDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    //Returns the record ID if successful, -1 otherwise
     static private long save_entry(SQLiteDatabase db, LogEntry log_entry) {
+        //Returns the record ID if successful, -1 otherwise
         ContentValues values = create_entry_content_values(log_entry);
 
         long record_id;
@@ -242,6 +160,73 @@ public class LogDbHelper extends SQLiteOpenHelper {
         values.put(LogContract.LogEntry.COLUMN_NAME_DATETIME, log_entry.get_date());
 
         return values;
+    }
+
+    static private Cursor create_cursor(SQLiteDatabase db, String query) {
+        Cursor cursor = db.query(
+                LogContract.LogEntry.TABLE_NAME,
+                ENTRY_PROJECTION,
+                query,
+                null,
+                null,
+                null,
+                null
+        );
+        return cursor;
+    }
+
+    static private LogEntry create_entry_from_cursor(Cursor cursor) {
+        DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US);
+        LogEntry log_entry;
+        String datetime,
+                sex,
+                folds_string;
+        double  weight;
+        int     age,
+                foldtype,
+                index;
+
+        try {
+            //Get the data
+            datetime = cursor.getString(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
+            age = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
+            folds_string = cursor.getString(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES));
+            foldtype = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_FOLDTYPE));
+            sex = cursor.getString(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_SEX));
+            weight = cursor.getDouble(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_WEIGHT));
+            index = cursor.getInt(
+                    cursor.getColumnIndexOrThrow(LogContract.LogEntry._ID));
+
+            int folds[] = parse_fold_string(folds_string);
+            //Create a log entry and insert it into our log
+            log_entry = new LogEntry(
+                            age,
+                            folds,
+                            foldtype,
+                            sex,
+                            weight,
+                            date_formatter.parse(datetime).toString(),
+                            index
+                        );
+
+        } catch (Exception e) {
+            //If there is an error, just return a placeholder entry to prevent crashing
+            log_entry = new LogEntry(20, new int[] {10,10,10}, 3, "Male", 200.0, "2017-12-12 12:12", -1);
+        }
+        return log_entry;
+    }
+
+    static private void acquire_instance(Context context) {
+        //Simple method to create our Singleton if it is un-initialized
+        if(mDbHelper == null) {
+            mDbHelper = new LogDbHelper(context);
+        }
     }
 
     static private int[] parse_fold_string(String folds_string) {
