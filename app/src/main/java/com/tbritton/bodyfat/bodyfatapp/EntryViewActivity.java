@@ -42,7 +42,7 @@ public class EntryViewActivity extends AppCompatActivity {
         if(entry_id != -1) {
             //extra id was found
             //need to load in entry information to the form
-            LogEntry entry = LogDbHelper.pull_entry(getApplicationContext(), entry_id);
+            LogEntry entry = LogDatabaseHelper.pull_entry(getApplicationContext(), entry_id);
             setup_fields(entry);
         }
     }
@@ -71,9 +71,8 @@ public class EntryViewActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_delete:
-                LogDbHelper db = new LogDbHelper(getApplicationContext());
                 if(entry_id != -1) {
-                    db.delete_entry(getApplicationContext(), entry_id);
+                    LogDatabaseHelper.delete_entry(getApplicationContext(), entry_id);
                 }
                 setResult(RESULT_OK, null);
                 finish();
@@ -94,7 +93,7 @@ public class EntryViewActivity extends AppCompatActivity {
 
     private void log() {
         LogEntry log_entry = create_entry_object();
-        LogDbHelper.log(getApplicationContext(), log_entry);
+        LogDatabaseHelper.log(getApplicationContext(), log_entry);
     }
 
     private void update() {
@@ -105,7 +104,7 @@ public class EntryViewActivity extends AppCompatActivity {
             //Get the updated information
             LogEntry log_entry = create_entry_object();
             //Update it.
-            LogDbHelper.update_entry(getApplicationContext(), entry_id, log_entry);
+            LogDatabaseHelper.update_entry(getApplicationContext(), entry_id, log_entry);
         }
     }
 

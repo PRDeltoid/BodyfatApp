@@ -2,7 +2,7 @@ package com.tbritton.bodyfat.bodyfatapp;
 
 import android.provider.BaseColumns;
 
-public final class LogContract {
+final class LogContract {
     private LogContract () {}
 
     public static class LogEntry implements BaseColumns {

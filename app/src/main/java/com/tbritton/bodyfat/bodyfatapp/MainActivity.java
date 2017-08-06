@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setup_graph() {
         //Pull our data
-        LogContainer log = LogDbHelper.pull_log(getApplicationContext());
+        LogContainer log = LogDatabaseHelper.pull_log(getApplicationContext());
         DataPoint data_points[];
         try {
             data_points = log.as_datapoints();

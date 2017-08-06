@@ -49,13 +49,6 @@ public class LogEntry {
         return folds;
     }
 
-    public int get_foldsum(int[] folds) {
-        int sum = 0;
-        for (int f : folds)
-            sum += f;
-        return sum;
-    }
-
     public String get_folds_string() {
         String folds_string = "";
         for(int f : folds) {
@@ -82,4 +75,11 @@ public class LogEntry {
     }
 
     public int get_database_index() { return database_index; }
+
+    private int get_foldsum(int[] folds) {
+        int sum = 0;
+        for (int f : folds)
+            sum += f;
+        return sum;
+    }
 }

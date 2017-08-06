@@ -34,7 +34,7 @@ public class ListViewActivity extends AppCompatActivity {
 
         //Pull our log data object
         try {
-            weight_log = LogDbHelper.pull_log(getApplicationContext()).as_arraylist();
+            weight_log = LogDatabaseHelper.pull_log(getApplicationContext()).as_arraylist();
         } catch(NullPointerException e) {
             weight_log = new ArrayList<>();
         }

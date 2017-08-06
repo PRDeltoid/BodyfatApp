@@ -1,7 +1,7 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
 
-public final class BodyfatCalculator {
+final class BodyfatCalculator {
     public static double calculate(int sum, int foldtype, int age, String sex) {
         double bodyfat = 0.0; //0.0 by default
         switch(foldtype) {

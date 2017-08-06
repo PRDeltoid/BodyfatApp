@@ -21,7 +21,7 @@ public class LogContainer {
 
     public DataPoint[] as_datapoints() {
         DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.US);
-        ArrayList<DataPoint> arrlist_datapoints = new ArrayList<DataPoint>();
+        ArrayList<DataPoint> arrlist_datapoints = new ArrayList<>();
         //Iterate through log and create a datapoint for each entry
         for(LogEntry log_entry: log) {
             try {

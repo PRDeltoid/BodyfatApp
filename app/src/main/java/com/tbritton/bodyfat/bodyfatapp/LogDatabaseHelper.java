@@ -5,67 +5,26 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class LogDbHelper extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 3;
-    public static final String DATABASE_NAME = "log.db";
-
-    private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + LogContract.LogEntry.TABLE_NAME + " (" +
-                    LogContract.LogEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    LogContract.LogEntry.COLUMN_NAME_AGE + " INTEGER NOT NULL," +
-                    LogContract.LogEntry.COLUMN_NAME_DATETIME + " DATETIME DEFAULT CURRENT_TIMESTAMP," +
-                    LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES + " TEXT NOT NULL," +
-                    LogContract.LogEntry.COLUMN_NAME_FOLDTYPE + " INTEGER NOT NULL," +
-                    LogContract.LogEntry.COLUMN_NAME_WEIGHT + " REAL NOT NULL," +
-                    LogContract.LogEntry.COLUMN_NAME_SEX + " TEXT NOT NULL," +
-                    LogContract.LogEntry.COLUMN_NAME_BODYFAT + " REAL NOT NULL)";
-
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + LogContract.LogEntry.TABLE_NAME;
-
-    private static final String[] ENTRY_PROJECTION =
-            {   LogContract.LogEntry._ID,
-                LogContract.LogEntry.COLUMN_NAME_DATETIME,
-                LogContract.LogEntry.COLUMN_NAME_BODYFAT,
-                LogContract.LogEntry.COLUMN_NAME_AGE,
-                LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES,
-                LogContract.LogEntry.COLUMN_NAME_FOLDTYPE,
-                LogContract.LogEntry.COLUMN_NAME_SEX,
-                LogContract.LogEntry.COLUMN_NAME_WEIGHT };
-
-    private static LogDbHelper mDbHelper = null;
-
-    public LogDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_ENTRIES);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(SQL_DELETE_ENTRIES);
-        onCreate(db);
-    }
-
-    @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
-    }
+ class LogDatabaseHelper {
+    private static final String[] ENTRY_PROJECTION = {
+                    LogContract.LogEntry._ID,
+                    LogContract.LogEntry.COLUMN_NAME_DATETIME,
+                    LogContract.LogEntry.COLUMN_NAME_BODYFAT,
+                    LogContract.LogEntry.COLUMN_NAME_AGE,
+                    LogContract.LogEntry.COLUMN_NAME_FOLDMEASURES,
+                    LogContract.LogEntry.COLUMN_NAME_FOLDTYPE,
+                    LogContract.LogEntry.COLUMN_NAME_SEX,
+                    LogContract.LogEntry.COLUMN_NAME_WEIGHT };
 
     static public LogContainer pull_log(Context context){
         //Pulls all log entries as a LogContainer object
-        acquire_instance(context);
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = LogDatabase.get_readable_db(context);
 
         Cursor cursor = create_cursor(db, null);
         LogContainer log = new LogContainer();
@@ -81,8 +40,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
     }
 
     static public LogEntry pull_entry(Context context, int entry_id) {
-        acquire_instance(context);
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = LogDatabase.get_readable_db(context);
 
         String selection = LogContract.LogEntry._ID + " = " + entry_id;
         Cursor cursor = create_cursor(db, selection);
@@ -96,10 +54,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
     }
 
     static void update_entry(Context context, int entry_id, LogEntry log_entry) {
-        if(mDbHelper == null) {
-            mDbHelper = new LogDbHelper(context);
-        }
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = LogDatabase.get_writable_db(context);
 
         ContentValues values = create_entry_content_values(log_entry);
 
@@ -107,21 +62,15 @@ public class LogDbHelper extends SQLiteOpenHelper {
     }
 
     static void delete_entry(Context context, int entry_id) {
-        acquire_instance(context);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = LogDatabase.get_writable_db(context);
 
         String[] entry_id_string = {Integer.toString(entry_id)};
 
         db.delete(LogContract.LogEntry.TABLE_NAME, LogContract.LogEntry._ID + " = ?", entry_id_string);
-
     }
 
     static void log(Context context, LogEntry log_entry) {
-        if (mDbHelper == null) {
-            mDbHelper = new LogDbHelper(context);
-        }
-        //Open our database
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        SQLiteDatabase db = LogDatabase.get_writable_db(context);
 
         long record_id = save_entry(db, log_entry);
 
@@ -163,7 +112,7 @@ public class LogDbHelper extends SQLiteOpenHelper {
     }
 
     static private Cursor create_cursor(SQLiteDatabase db, String query) {
-        Cursor cursor = db.query(
+        return db.query(
                 LogContract.LogEntry.TABLE_NAME,
                 ENTRY_PROJECTION,
                 query,
@@ -172,7 +121,6 @@ public class LogDbHelper extends SQLiteOpenHelper {
                 null,
                 null
         );
-        return cursor;
     }
 
     static private LogEntry create_entry_from_cursor(Cursor cursor) {
@@ -220,13 +168,6 @@ public class LogDbHelper extends SQLiteOpenHelper {
             log_entry = new LogEntry(20, new int[] {10,10,10}, 3, "Male", 200.0, "2017-12-12 12:12", -1);
         }
         return log_entry;
-    }
-
-    static private void acquire_instance(Context context) {
-        //Simple method to create our Singleton if it is un-initialized
-        if(mDbHelper == null) {
-            mDbHelper = new LogDbHelper(context);
-        }
     }
 
     static private int[] parse_fold_string(String folds_string) {
