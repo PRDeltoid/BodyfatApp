@@ -1,40 +1,67 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
+import java.util.Date;
 
 class LogEntry {
-    final private int     age,
-                          foldtype,
-                          database_index;
-    final private int[]   folds;
-    final private String  sex,
-                          date;
-    final private double  weight,
-                          bodyfat;
+    private int     age,
+                    foldtype,
+                    database_index;
+    private String  sex;
+    private Date    date;
+    private int[]   folds;
+    private double  weight,
+                    bodyfat;
 
-    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, String date) {
-        int sum = get_foldsum(folds);
-
-        this.age      = age;
-        this.folds    = folds;
-        this.foldtype = foldtype;
-        this.sex      = sex;
-        this.weight   = weight;
-        this.bodyfat  = BodyfatCalculator.calculate(sum, foldtype, age, sex);
+    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, Date date) {
+        setup_basic_fields();
         this.date     = date;
         this.database_index = -1;
-    }
-
-    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, String date, int index) {
-        int sum = get_foldsum(folds);
-
-        this.age      = age;
         this.folds    = folds;
         this.foldtype = foldtype;
-        this.sex      = sex;
         this.weight   = weight;
-        this.bodyfat  = BodyfatCalculator.calculate(sum, foldtype, age, sex);
+        calculate_bodyfat();
+    }
+
+    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, Date date, int index) {
+        setup_basic_fields();
         this.date     = date;
         this.database_index = index;
+        this.folds    = folds;
+        this.foldtype = foldtype;
+        this.weight   = weight;
+        this.bodyfat  = BodyfatCalculator.calculate(get_foldsum(), foldtype, age, sex);
+        calculate_bodyfat();
+    }
+
+    public LogEntry() {
+        setup_basic_fields();
+        this.date     = new Date();
+        int[] folds = {10, 10, 10};
+        this.folds    = folds;
+        this.foldtype = 3;
+        this.weight   = 200;
+        this.database_index = -1;
+        calculate_bodyfat();
+    }
+
+    private void setup_basic_fields() {
+        this.age      = SettingsHelper.get_age();
+        this.sex      = SettingsHelper.get_sex();
+    }
+
+    public void set_folds(int[] folds) {
+        this.folds = folds;
+        calculate_bodyfat();
+    }
+
+    public void set_fold(int fold, int measure) {
+        this.folds[fold-1] = measure;
+        calculate_bodyfat();
+    }
+
+    public void set_weight(double weight) {
+        this.weight = weight;
+        calculate_bodyfat();
     }
 
     public int get_age() {
@@ -70,16 +97,20 @@ class LogEntry {
         return bodyfat;
     }
 
-    public String get_date() {
+    public Date get_date() {
         return date;
     }
 
     public int get_database_index() { return database_index; }
 
-    private int get_foldsum(int[] folds) {
+    private int get_foldsum() {
         int sum = 0;
         for (int f : folds)
             sum += f;
         return sum;
+    }
+
+    private void calculate_bodyfat() {
+        this.bodyfat = BodyfatCalculator.calculate(get_foldsum(), foldtype, age, sex);
     }
 }

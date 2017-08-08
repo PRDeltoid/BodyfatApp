@@ -8,35 +8,33 @@ import java.util.Locale;
 
 
 public class DateFormatter {
-    public static String convert_to_nice_date(String date_string) {
-        //Convert from long date to short date for readability
-        DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.US);
-        DateFormat toFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
-
-        Date date = null;
-        try {
-            date = fromFormat.parse(date_string);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return toFormat.format(date);
+    public static String get_db_date_string(Date date) {
+        //This func is here to help maintain a consistent database timestamp layout
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US);
+        dateFormatter.setLenient(false);
+        return dateFormatter.format(date);
     }
 
-    public static String convert_to_nice_time(String date_string) {
-        //Convert from long date to short date for readability
-        DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.US);
-        DateFormat toFormat = new SimpleDateFormat("kk:mm", Locale.US);
-
-        Date date = null;
+    public static Date get_date_from_db_string(String date_string) {
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.ENGLISH);
         try {
-            date = fromFormat.parse(date_string);
+            return format.parse(date_string);
         } catch (ParseException e) {
-            e.printStackTrace();
+            return new Date();
         }
-
-        return toFormat.format(date);
-
     }
 
+    public static String get_display_datestring(Date date) {
+        //Convert from long date to short date for readability
+        DateFormat format = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
+        return format.format(date);
+    }
+
+    public static String get_display_timestring(Date date) {
+        //Convert from long date to short date for readability
+        DateFormat format = new SimpleDateFormat("kk:mm", Locale.US);
+
+        return format.format(date);
+
+    }
 }

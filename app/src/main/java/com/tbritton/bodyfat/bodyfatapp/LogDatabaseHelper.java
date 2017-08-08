@@ -7,9 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import java.util.Date;
 
  class LogDatabaseHelper {
     private static final String[] ENTRY_PROJECTION = {
@@ -106,7 +104,7 @@ import java.util.Locale;
         values.put(LogContract.LogEntry.COLUMN_NAME_AGE,      log_entry.get_age());
         values.put(LogContract.LogEntry.COLUMN_NAME_SEX,      log_entry.get_sex());
         values.put(LogContract.LogEntry.COLUMN_NAME_WEIGHT,   log_entry.get_weight());
-        values.put(LogContract.LogEntry.COLUMN_NAME_DATETIME, log_entry.get_date());
+        values.put(LogContract.LogEntry.COLUMN_NAME_DATETIME, DateFormatter.get_db_date_string(log_entry.get_date()));
 
         return values;
     }
@@ -124,19 +122,19 @@ import java.util.Locale;
     }
 
     static private LogEntry create_entry_from_cursor(Cursor cursor) {
-        DateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US);
         LogEntry log_entry;
-        String datetime,
+        String date_string,
                 sex,
                 folds_string;
         double  weight;
         int     age,
                 foldtype,
                 index;
+        Date    date;
 
         try {
             //Get the data
-            datetime = cursor.getString(
+            date_string = cursor.getString(
                     cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_DATETIME));
             age = cursor.getInt(
                     cursor.getColumnIndexOrThrow(LogContract.LogEntry.COLUMN_NAME_AGE));
@@ -151,6 +149,8 @@ import java.util.Locale;
             index = cursor.getInt(
                     cursor.getColumnIndexOrThrow(LogContract.LogEntry._ID));
 
+            date = DateFormatter.get_date_from_db_string(date_string);
+
             int folds[] = parse_fold_string(folds_string);
             //Create a log entry and insert it into our log
             log_entry = new LogEntry(
@@ -159,13 +159,13 @@ import java.util.Locale;
                             foldtype,
                             sex,
                             weight,
-                            date_formatter.parse(datetime).toString(),
+                            date,
                             index
                         );
 
         } catch (Exception e) {
             //If there is an error, just return a placeholder entry to prevent crashing
-            log_entry = new LogEntry(20, new int[] {10,10,10}, 3, "Male", 200.0, "2017-12-12 12:12", -1);
+            log_entry = new LogEntry();
         }
         return log_entry;
     }

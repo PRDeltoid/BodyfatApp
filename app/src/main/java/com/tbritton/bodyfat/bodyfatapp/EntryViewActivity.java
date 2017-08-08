@@ -6,6 +6,8 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,26 +20,44 @@ import java.util.Date;
 import java.util.Locale;
 
 public class EntryViewActivity extends AppCompatActivity {
-    private final int MEASURE_TYPE = 3;
     private EditText measure_one_text,
              measure_two_text,
              measure_three_text,
              weight_text;
     public TextView date_text;
     private int entry_id;
+    private LogEntry log_entry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_view);
 
-        //Assign components to variables
+        ////////////////////////////////
+        //Setup UI components / variables
+        ////////////////////////////////
         measure_one_text   = (EditText) findViewById(R.id.measure_1_text);
         measure_two_text   = (EditText) findViewById(R.id.measure_2_text);
         measure_three_text = (EditText) findViewById(R.id.measure_3_text);
         weight_text        = (EditText) findViewById(R.id.weight_text);
         date_text          = (TextView) findViewById(R.id.date_textview);
+        Toolbar entry_toolbar = (Toolbar) findViewById(R.id.entry_toolbar);
+        setSupportActionBar(entry_toolbar);
 
+        //Pull our entry, or create a new one if no entry ID exists
+        entry_id = getIntent().getIntExtra("EXTRA_ENTRY_ID", -1);
+        if(entry_id != -1) {
+            //extra id was found
+            log_entry = LogDatabaseHelper.pull_entry(getApplicationContext(), entry_id);
+            populate_ui();
+        } else {
+            //no id, pull a blank object
+            log_entry = new LogEntry();
+        }
+
+        /////////////////
+        //Event listeners
+        /////////////////
         date_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,19 +65,6 @@ public class EntryViewActivity extends AppCompatActivity {
                 date_picker_fragment.show(getSupportFragmentManager(), "datePicker");
             }
         });
-
-        //Initialize toolbar
-        Toolbar entry_toolbar = (Toolbar) findViewById(R.id.entry_toolbar);
-        setSupportActionBar(entry_toolbar);
-
-        //Get the entry ID, if we're editing an existing entry
-        entry_id = getIntent().getIntExtra("EXTRA_ENTRY_ID", -1);
-        if(entry_id != -1) {
-            //extra id was found
-            //need to load in entry information to the form
-            LogEntry entry = LogDatabaseHelper.pull_entry(getApplicationContext(), entry_id);
-            setup_fields(entry);
-        }
     }
 
     @Override
@@ -126,21 +133,19 @@ public class EntryViewActivity extends AppCompatActivity {
         //Calculate sum
         int[] folds = {measure_one, measure_two, measure_three};
 
-        //Temporary hardcoded variables
-        //These will be moved to Settings later
-        int age = 25;
         double weight = Float.parseFloat(weight_text.getText().toString());
 
+        log_entry.set_folds(folds);
+
         //Generate a date for the log
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US);
-        dateFormatter.setLenient(false);
-        String date = dateFormatter.format(new Date());
 
         //Create our log entry to give to our logger
-        return new LogEntry(age, folds, MEASURE_TYPE, "Male", weight, date);
+        log_entry.set_weight(weight);
+        return log_entry;
+        //return new LogEntry(age, folds, MEASURE_TYPE, "Male", weight, date);
     }
 
-    private void setup_fields(LogEntry log_entry) {
+    private void populate_ui() {
         int[] folds;
         try {
             folds = log_entry.get_folds();
@@ -152,6 +157,6 @@ public class EntryViewActivity extends AppCompatActivity {
         measure_two_text.setText(Integer.toString(folds[1]));
         measure_three_text.setText(Integer.toString(folds[2]));
         weight_text.setText(Double.toString(weight));
-        date_text.setText(DateFormatter.convert_to_nice_date(log_entry.get_date()));
+        date_text.setText(DateFormatter.get_display_datestring(log_entry.get_date()));
     }
 }

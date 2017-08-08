@@ -1,6 +1,7 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,12 +14,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
@@ -32,10 +35,12 @@ public class ListViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        listview = (ListView) findViewById(R.id.list_view);
-
         //Pull our log data object
         populate_weight_log();
+
+        listview = (ListView) findViewById(R.id.list_view);
+        listview.setChoiceMode(ListView.CHOICE_MODE_NONE);
+        listview.setLongClickable(true);
 
         //Create an adapter for our data
         ListViewAdapter adapter = new ListViewAdapter();
@@ -50,6 +55,25 @@ public class ListViewActivity extends AppCompatActivity {
                 startActivityForResult(single_entry_intent, 1);
             }
         });
+
+        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                listview.setItemChecked(position, true);
+                long item_list[] = listview.getCheckedItemIds();
+                //Toast.makeText(getApplicationContext(), item_list, Toast.LENGTH_SHORT).show();
+                /*if(Arrays.asList(listview.getCheckedItemIds()).contains(id)) {
+                    listview.setItemChecked(position, false);
+                    view.setBackgroundColor(Color.GRAY);
+                } else {
+                    listview.setItemChecked(position, false);
+                    view.setBackgroundColor(Color.GREEN);
+                }*/
+                view.setBackgroundColor(Color.GREEN);
+
+                return true;
+            }
+       });
     }
 
     @Override
@@ -89,37 +113,6 @@ public class ListViewActivity extends AppCompatActivity {
         }
     }
 
-    private String convert_to_nice_date(String date_string) {
-        //Convert from long date to short date for readability
-        DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.US);
-        DateFormat toFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
-
-        Date date = null;
-        try {
-            date = fromFormat.parse(date_string);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return toFormat.format(date);
-    }
-
-    private String convert_to_nice_time(String date_string) {
-        //Convert from long date to short date for readability
-        DateFormat fromFormat = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.US);
-        DateFormat toFormat = new SimpleDateFormat("kk:mm", Locale.US);
-
-        Date date = null;
-        try {
-            date = fromFormat.parse(date_string);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return toFormat.format(date);
-
-    }
-
     private class ListViewAdapter extends BaseAdapter {
         //Code related to composing our list view
 
@@ -152,8 +145,8 @@ public class ListViewActivity extends AppCompatActivity {
             LogEntry log_entry = getItem(position);
 
             //Convert date to a more readable format
-            String date    = convert_to_nice_date(log_entry.get_date());
-            String time    = convert_to_nice_time(log_entry.get_date());
+            String date    = DateFormatter.get_display_datestring(log_entry.get_date());
+            String time    = DateFormatter.get_display_timestring(log_entry.get_date());
             String bodyfat = new DecimalFormat("#.##").format(log_entry.get_bodyfat_percent()) + "%";
             String weight  = Double.toString(log_entry.get_weight()) + " lb";
 
@@ -165,6 +158,7 @@ public class ListViewActivity extends AppCompatActivity {
                     .setText(weight);
             ((TextView) convertView.findViewById(R.id.time))
                     .setText(time);
+
 
             return convertView;
         }

@@ -24,13 +24,8 @@ class LogContainer {
         ArrayList<DataPoint> arrlist_datapoints = new ArrayList<>();
         //Iterate through log and create a datapoint for each entry
         for(LogEntry log_entry: log) {
-            try {
-                DataPoint datapoint = new DataPoint(df.parse(log_entry.get_date()), log_entry.get_bodyfat_percent());
-                arrlist_datapoints.add(datapoint);
-            } catch(ParseException e) {
-                //Abort
-                return new DataPoint[] { new DataPoint(0,0) };
-            }
+            DataPoint datapoint = new DataPoint(log_entry.get_date(), log_entry.get_bodyfat_percent());
+            arrlist_datapoints.add(datapoint);
         }
         //Convert from ArrayList to Array (required by graph renderer)
         DataPoint data_points[] = new DataPoint[arrlist_datapoints.size()];
