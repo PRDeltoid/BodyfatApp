@@ -7,6 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class DatePickerFragment extends DialogFragment
                             implements DatePickerDialog.OnDateSetListener {
@@ -21,6 +22,12 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
+        EntryViewActivity entry_view = (EntryViewActivity) getActivity();
+        //this is lossy (doesn't save the time)
+        //figure out a way to keep previously set time
+        Date date = new Date(year, month, day);
+        entry_view.log_entry.set_date(date);
+        entry_view.refresh_ui();
     }
 
 

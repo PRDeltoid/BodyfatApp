@@ -44,11 +44,6 @@ class LogEntry {
         calculate_bodyfat();
     }
 
-    private void setup_basic_fields() {
-        this.age      = SettingsHelper.get_age();
-        this.sex      = SettingsHelper.get_sex();
-    }
-
     public void set_folds(int[] folds) {
         this.folds = folds;
         calculate_bodyfat();
@@ -62,6 +57,10 @@ class LogEntry {
     public void set_weight(double weight) {
         this.weight = weight;
         calculate_bodyfat();
+    }
+
+    public void set_date(Date date) {
+        this.date = date;
     }
 
     public int get_age() {
@@ -102,6 +101,11 @@ class LogEntry {
     }
 
     public int get_database_index() { return database_index; }
+
+    private void setup_basic_fields() {
+        this.age      = SettingsHelper.get_age();
+        this.sex      = SettingsHelper.get_sex();
+    }
 
     private int get_foldsum() {
         int sum = 0;

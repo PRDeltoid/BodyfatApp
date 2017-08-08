@@ -19,7 +19,7 @@ public class EntryViewActivity extends AppCompatActivity {
              weight_text;
     public TextView date_text;
     private int entry_id;
-    private LogEntry log_entry;
+    public LogEntry log_entry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,25 +117,26 @@ public class EntryViewActivity extends AppCompatActivity {
         }
     }
 
+    //Creates the entry object to be used for database operations
+    //this method is used for both #log and #update
+    //only data we "care" about updating is the folds and weight
+    //everything else is already set via Settings and inference.
     private LogEntry create_entry_object() {
         //Get values from fields and convert them to integers using parseInt
         int measure_one   = Integer.parseInt(measure_one_text.getText().toString());
         int measure_two   = Integer.parseInt(measure_two_text.getText().toString());
         int measure_three = Integer.parseInt(measure_three_text.getText().toString());
 
-        //Calculate sum
+        //Entry data
         int[] folds = {measure_one, measure_two, measure_three};
-
         double weight = Float.parseFloat(weight_text.getText().toString());
 
+        //Set the data
         log_entry.set_folds(folds);
-
-        //Generate a date for the log
-
-        //Create our log entry to give to our logger
         log_entry.set_weight(weight);
+
+        //Return the object
         return log_entry;
-        //return new LogEntry(age, folds, MEASURE_TYPE, "Male", weight, date);
     }
 
     private void populate_ui() {
@@ -151,5 +152,10 @@ public class EntryViewActivity extends AppCompatActivity {
         measure_three_text.setText(Integer.toString(folds[2]));
         weight_text.setText(Double.toString(weight));
         date_text.setText(DateFormatter.get_display_datestring(log_entry.get_date()));
+    }
+
+    public void refresh_ui() {
+        date_text.setText(DateFormatter.get_display_datestring(log_entry.get_date()));
+
     }
 }
