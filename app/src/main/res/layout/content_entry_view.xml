@@ -17,12 +17,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/measure_one"
         android:inputType="number"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="8dp" />
+        android:layout_marginStart="8dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <EditText
         android:id="@+id/measure_2_text"
@@ -73,19 +73,33 @@
         android:text="Date"
         android:textAppearance="?android:textAppearanceMedium"
         app:layout_constraintTop_toBottomOf="@+id/weight_text"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp" />
 
     <TextView
         android:id="@+id/time_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="13dp"
-        android:layout_marginTop="11dp"
+        android:layout_marginTop="10dp"
         android:hint="@string/placeholder_time"
         android:text="Time"
         android:textAppearance="?android:textAppearanceMedium"
         app:layout_constraintTop_toBottomOf="@+id/weight_text"
-        app:layout_constraintLeft_toRightOf="@+id/date_textview" />
+        app:layout_constraintLeft_toRightOf="@+id/date_textview"
+        android:layout_marginStart="13dp" />
+
+    <Spinner
+        android:id="@+id/measure_type_spinner"
+        android:layout_width="103dp"
+        android:layout_height="25dp"
+        app:layout_constraintLeft_toRightOf="@+id/measure_1_text"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="0dp" />
 
 
 </android.support.constraint.ConstraintLayout>

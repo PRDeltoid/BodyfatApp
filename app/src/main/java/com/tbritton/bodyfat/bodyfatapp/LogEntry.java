@@ -12,16 +12,6 @@ class LogEntry {
     private double  weight,
                     bodyfat;
 
-    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, Date date) {
-        setup_basic_fields();
-        this.date     = date;
-        this.database_index = -1;
-        this.folds    = folds;
-        this.foldtype = foldtype;
-        this.weight   = weight;
-        calculate_bodyfat();
-    }
-
     public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, Date date, int index) {
         setup_basic_fields();
         this.date     = date;

@@ -11,7 +11,9 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ public class EntryViewActivity extends AppCompatActivity {
              weight_text;
     public TextView date_text,
                     time_text;
+    private Spinner measure_type_spinner;
     private int entry_id;
     public LogEntry log_entry;
     private boolean entry_has_id = false;
@@ -40,22 +43,23 @@ public class EntryViewActivity extends AppCompatActivity {
         weight_text        = (EditText) findViewById(R.id.weight_text);
         date_text          = (TextView) findViewById(R.id.date_textview);
         time_text          = (TextView) findViewById(R.id.time_textview);
+        measure_type_spinner = (Spinner) findViewById(R.id.measure_type_spinner);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.measure_types, android.R.layout.simple_spinner_dropdown_item);
+
+        //adapter.setDropDownViewResource(android.R.);
+        measure_type_spinner.setAdapter(adapter);
+
         Toolbar entry_toolbar = (Toolbar) findViewById(R.id.entry_toolbar);
         setSupportActionBar(entry_toolbar);
 
-        //Pull our entry, or create a new one if no entry ID exists
-        entry_id = getIntent().getIntExtra("EXTRA_ENTRY_ID", -1);
-        if(entry_id != -1) {
-            entry_has_id = true;
-        }
         if(entry_has_id) {
-            //extra id was found
             log_entry = LogDatabaseHelper.pull_entry(getApplicationContext(), entry_id);
             populate_ui();
         } else {
-            //no id, pull a blank object
-            log_entry = new LogEntry();
-            populate_datetime_ui(); //only populate datetime as our other values are not set up yet
+            log_entry = new LogEntry(); //no id, pull a blank object
+            populate_datetime_ui();     //only populate datetime as our other values are not set up yet
         }
 
         /////////////////
@@ -154,6 +158,13 @@ public class EntryViewActivity extends AppCompatActivity {
             LogEntry log_entry = update_entry_object();
             //Update it.
             LogDatabaseHelper.update_entry(getApplicationContext(), entry_id, log_entry);
+        }
+    }
+
+    private void set_entry_id_flag() {
+        entry_id = getIntent().getIntExtra("EXTRA_ENTRY_ID", -1);
+        if(entry_id != -1) {
+            entry_has_id = true; //set entry_has_id flag
         }
     }
 
