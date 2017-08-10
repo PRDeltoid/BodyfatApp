@@ -6,11 +6,14 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EntryViewActivity extends AppCompatActivity {
     private EditText measure_one_text,
@@ -20,6 +23,7 @@ public class EntryViewActivity extends AppCompatActivity {
     public TextView date_text;
     private int entry_id;
     public LogEntry log_entry;
+    private boolean entry_has_id = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,9 @@ public class EntryViewActivity extends AppCompatActivity {
         //Pull our entry, or create a new one if no entry ID exists
         entry_id = getIntent().getIntExtra("EXTRA_ENTRY_ID", -1);
         if(entry_id != -1) {
+            entry_has_id = true;
+        }
+        if(entry_has_id) {
             //extra id was found
             log_entry = LogDatabaseHelper.pull_entry(getApplicationContext(), entry_id);
             populate_ui();
@@ -58,6 +65,32 @@ public class EntryViewActivity extends AppCompatActivity {
                 date_picker_fragment.show(getSupportFragmentManager(), "datePicker");
             }
         });
+
+        TextWatcher refresh_on_change_watcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                //if textfield is not empty, update the object with new values after change
+                if(!(s.toString().isEmpty())) {
+                    update_entry_object();
+                    Toast.makeText(getApplicationContext(), "Change", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        measure_one_text.addTextChangedListener(refresh_on_change_watcher);
+        measure_two_text.addTextChangedListener(refresh_on_change_watcher);
+        measure_three_text.addTextChangedListener(refresh_on_change_watcher);
+        weight_text.addTextChangedListener(refresh_on_change_watcher);
+
     }
 
     @Override
@@ -71,7 +104,7 @@ public class EntryViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
-                if(entry_id == -1) {
+                if(!entry_has_id) {
                     log();
                 } else {
                     update();
@@ -79,7 +112,7 @@ public class EntryViewActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_delete:
-                if(entry_id != -1) {
+                if(entry_has_id) {
                     LogDatabaseHelper.delete_entry(getApplicationContext(), entry_id);
                 }
                 break;
@@ -101,17 +134,14 @@ public class EntryViewActivity extends AppCompatActivity {
     }
 
     private void log() {
-        LogEntry log_entry = create_entry_object();
+        LogEntry log_entry = update_entry_object();
         LogDatabaseHelper.log(getApplicationContext(), log_entry);
     }
 
     private void update() {
-        entry_id = getIntent().getIntExtra("EXTRA_ENTRY_ID", -1);
-        //If an entry_id is present, we are in "Edit" mode and should
-        // update the entry instead of creating a new one
-        if(entry_id != -1) {
+        if(entry_has_id) {
             //Get the updated information
-            LogEntry log_entry = create_entry_object();
+            LogEntry log_entry = update_entry_object();
             //Update it.
             LogDatabaseHelper.update_entry(getApplicationContext(), entry_id, log_entry);
         }
@@ -121,15 +151,37 @@ public class EntryViewActivity extends AppCompatActivity {
     //this method is used for both #log and #update
     //only data we "care" about updating is the folds and weight
     //everything else is already set via Settings and inference.
-    private LogEntry create_entry_object() {
-        //Get values from fields and convert them to integers using parseInt
-        int measure_one   = Integer.parseInt(measure_one_text.getText().toString());
-        int measure_two   = Integer.parseInt(measure_two_text.getText().toString());
-        int measure_three = Integer.parseInt(measure_three_text.getText().toString());
+    private LogEntry update_entry_object() {
+        int measure_one,
+            measure_two,
+            measure_three;
+        double weight;
 
-        //Entry data
+
+        //Get values from fields and convert them to integers using parseInt
+        try {
+            weight = Float.parseFloat(weight_text.getText().toString());
+        } catch (Exception e) {
+            weight = 0;
+        }
+        try {
+            measure_one = Integer.parseInt(measure_one_text.getText().toString());
+        } catch(Exception e) {
+            measure_one = 0;
+        }
+        try {
+            measure_two   = Integer.parseInt(measure_two_text.getText().toString());
+        } catch(Exception e) {
+            measure_two = 0;
+        }
+        try {
+            measure_three   = Integer.parseInt(measure_three_text.getText().toString());
+        } catch(Exception e) {
+            measure_three = 0;
+        }
+
+        //Create fold array
         int[] folds = {measure_one, measure_two, measure_three};
-        double weight = Float.parseFloat(weight_text.getText().toString());
 
         //Set the data
         log_entry.set_folds(folds);
