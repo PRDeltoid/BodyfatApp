@@ -22,10 +22,13 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
+        //create our date object from the selected time
+        Calendar c = Calendar.getInstance();
+        c.set(year, month, day );
+        Date date = c.getTime();
+
+        //Update the log entry object with our new date
         EntryViewActivity entry_view = (EntryViewActivity) getActivity();
-        //this is lossy (doesn't save the time)
-        //figure out a way to keep previously set time
-        Date date = new Date(year, month, day);
         entry_view.log_entry.set_date(date);
         entry_view.refresh_ui();
     }
