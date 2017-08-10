@@ -24,7 +24,7 @@
     <string name="placeholder_date">Date (12/12/2012)</string>
     <string name="placeholder_time">10:30</string>
 
-    <string-array name="measure_types">
+    <string-array name="measure_types_array">
         <item>3 Measure</item>
         <item>5 Measure</item>
         <item>7 Measure</item>

@@ -43,17 +43,20 @@ public class EntryViewActivity extends AppCompatActivity {
         weight_text        = (EditText) findViewById(R.id.weight_text);
         date_text          = (TextView) findViewById(R.id.date_textview);
         time_text          = (TextView) findViewById(R.id.time_textview);
+
+        //Set up the measure type spinner
         measure_type_spinner = (Spinner) findViewById(R.id.measure_type_spinner);
-
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.measure_types, android.R.layout.simple_spinner_dropdown_item);
-
-        //adapter.setDropDownViewResource(android.R.);
+                R.array.measure_types_array, android.R.layout.simple_spinner_dropdown_item);
         measure_type_spinner.setAdapter(adapter);
 
+        //Setup the toolbar
         Toolbar entry_toolbar = (Toolbar) findViewById(R.id.entry_toolbar);
         setSupportActionBar(entry_toolbar);
 
+        set_entry_id_flag();
+
+        //Setup the entry
         if(entry_has_id) {
             log_entry = LogDatabaseHelper.pull_entry(getApplicationContext(), entry_id);
             populate_ui();

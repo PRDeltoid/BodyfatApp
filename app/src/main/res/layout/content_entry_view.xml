@@ -16,13 +16,14 @@
         android:id="@+id/measure_1_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
+        android:layout_marginLeft="18dp"
         android:ems="10"
         android:hint="@string/measure_one"
         android:inputType="number"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="8dp"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp" />
 
     <EditText
         android:id="@+id/measure_2_text"
@@ -99,7 +100,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="6dp" />
 
 
 </android.support.constraint.ConstraintLayout>
