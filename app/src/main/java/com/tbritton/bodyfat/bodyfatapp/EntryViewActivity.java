@@ -20,7 +20,8 @@ public class EntryViewActivity extends AppCompatActivity {
              measure_two_text,
              measure_three_text,
              weight_text;
-    public TextView date_text;
+    public TextView date_text,
+                    time_text;
     private int entry_id;
     public LogEntry log_entry;
     private boolean entry_has_id = false;
@@ -38,6 +39,7 @@ public class EntryViewActivity extends AppCompatActivity {
         measure_three_text = (EditText) findViewById(R.id.measure_3_text);
         weight_text        = (EditText) findViewById(R.id.weight_text);
         date_text          = (TextView) findViewById(R.id.date_textview);
+        time_text          = (TextView) findViewById(R.id.time_textview);
         Toolbar entry_toolbar = (Toolbar) findViewById(R.id.entry_toolbar);
         setSupportActionBar(entry_toolbar);
 
@@ -53,6 +55,7 @@ public class EntryViewActivity extends AppCompatActivity {
         } else {
             //no id, pull a blank object
             log_entry = new LogEntry();
+            populate_datetime_ui(); //only populate datetime as our other values are not set up yet
         }
 
         /////////////////
@@ -63,6 +66,13 @@ public class EntryViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DialogFragment date_picker_fragment = new DatePickerFragment();
                 date_picker_fragment.show(getSupportFragmentManager(), "datePicker");
+            }
+        });
+        time_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 DialogFragment time_picker_fragment = new TimePickerFragment();
+                 time_picker_fragment.show(getSupportFragmentManager(), "timePicker");
             }
         });
 
@@ -203,11 +213,15 @@ public class EntryViewActivity extends AppCompatActivity {
         measure_two_text.setText(Integer.toString(folds[1]));
         measure_three_text.setText(Integer.toString(folds[2]));
         weight_text.setText(Double.toString(weight));
+        populate_datetime_ui();
+    }
+
+    private void populate_datetime_ui() {
         date_text.setText(DateFormatter.get_display_datestring(log_entry.get_date()));
+        time_text.setText(DateFormatter.get_display_timestring(log_entry.get_date()));
     }
 
     public void refresh_ui() {
-        date_text.setText(DateFormatter.get_display_datestring(log_entry.get_date()));
-
+        populate_datetime_ui();
     }
 }
