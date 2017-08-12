@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 
  class LogDatabaseHelper {
@@ -151,7 +152,7 @@ import java.util.Date;
 
             date = DateFormatter.get_date_from_db_string(date_string);
 
-            int folds[] = parse_fold_string(folds_string);
+            ArrayList<Integer> folds = parse_fold_string(folds_string);
             //Create a log entry and insert it into our log
             log_entry = new LogEntry(
                             age,
@@ -170,11 +171,13 @@ import java.util.Date;
         return log_entry;
     }
 
-    static private int[] parse_fold_string(String folds_string) {
+    static private ArrayList<Integer> parse_fold_string(String folds_string) {
         String[] s = folds_string.split(",");
-        int[] numbers = new int[s.length];
-        for (int curr = 0; curr < s.length; curr++)
-            numbers[curr] = Integer.parseInt(s[curr]);
+        ArrayList<Integer> numbers = new ArrayList<>();
+        //int[] numbers = new int[s.length];
+        for (int curr = 0; curr < s.length; curr++) {
+            numbers.add(curr, Integer.parseInt(s[curr]));
+        }
         return numbers;
     }
 }

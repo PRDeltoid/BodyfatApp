@@ -14,4 +14,6 @@ public class SettingsHelper {
     }
 
     public static TimeZone get_timezone() { return TimeZone.getTimeZone("America/Los_Angeles");}
+
+    public static int get_default_foldtype() { return 3; }
 }

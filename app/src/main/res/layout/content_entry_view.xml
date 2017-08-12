@@ -12,20 +12,20 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp">
 
-    <EditText
+    <com.tbritton.bodyfat.bodyfatapp.MeasurementEditText
         android:id="@+id/measure_1_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="18dp"
+        android:layout_marginLeft="8dp"
         android:ems="10"
         android:hint="@string/measure_one"
         android:inputType="number"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/date_textview" />
 
-    <EditText
+    <com.tbritton.bodyfat.bodyfatapp.MeasurementEditText
         android:id="@+id/measure_2_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
         app:layout_constraintTop_toBottomOf="@+id/measure_1_text"
         android:layout_marginStart="8dp" />
 
-    <EditText
+    <com.tbritton.bodyfat.bodyfatapp.MeasurementEditText
         android:id="@+id/measure_3_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,7 +51,54 @@
         app:layout_constraintTop_toBottomOf="@+id/measure_2_text"
         android:layout_marginStart="8dp" />
 
-    <EditText
+    <com.tbritton.bodyfat.bodyfatapp.MeasurementEditText
+        android:id="@+id/measure_4_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:ems="10"
+        android:hint="@string/measure_four"
+        android:inputType="number"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/measure_3_text" />
+
+    <com.tbritton.bodyfat.bodyfatapp.MeasurementEditText
+        android:id="@+id/measure_5_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:ems="10"
+        android:hint="@string/measure_five"
+        android:inputType="number"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/measure_4_text" />
+
+    <com.tbritton.bodyfat.bodyfatapp.MeasurementEditText
+        android:id="@+id/measure_6_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:ems="10"
+        android:hint="@string/measure_six"
+        android:inputType="number"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/measure_5_text" />
+    <com.tbritton.bodyfat.bodyfatapp.MeasurementEditText
+        android:id="@+id/measure_7_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:ems="10"
+        android:hint="@string/measure_seven"
+        android:inputType="number"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/measure_6_text" />
+
+    <com.tbritton.bodyfat.bodyfatapp.MeasurementEditText
         android:id="@+id/weight_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -61,46 +108,59 @@
         android:hint="@string/weight"
         android:inputType="number"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/measure_3_text"
+        app:layout_constraintTop_toBottomOf="@+id/measure_7_text"
         android:layout_marginStart="8dp" />
 
     <TextView
         android:id="@+id/date_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="12dp"
         android:hint="@string/placeholder_date"
         android:text="Date"
         android:textAppearance="?android:textAppearanceMedium"
-        app:layout_constraintTop_toBottomOf="@+id/weight_text"
+        android:layout_marginLeft="94dp"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="21dp"
         android:layout_marginStart="8dp" />
 
     <TextView
         android:id="@+id/time_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="13dp"
-        android:layout_marginTop="10dp"
         android:hint="@string/placeholder_time"
         android:text="Time"
         android:textAppearance="?android:textAppearanceMedium"
-        app:layout_constraintTop_toBottomOf="@+id/weight_text"
-        app:layout_constraintLeft_toRightOf="@+id/date_textview"
-        android:layout_marginStart="13dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="21dp"
+        app:layout_constraintLeft_toRightOf="@+id/textView"
+        android:layout_marginLeft="84dp"
+        android:layout_marginStart="8dp" />
 
     <Spinner
         android:id="@+id/measure_type_spinner"
         android:layout_width="103dp"
         android:layout_height="25dp"
         app:layout_constraintLeft_toRightOf="@+id/measure_1_text"
+        android:textAppearance="?android:textAppearanceMedium"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="6dp" />
+        android:layout_marginTop="21dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/at"
+        app:layout_constraintLeft_toRightOf="@+id/date_textview"
+        android:layout_marginLeft="84dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/date_textview" />
 
 
 </android.support.constraint.ConstraintLayout>

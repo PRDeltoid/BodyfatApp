@@ -7,6 +7,10 @@
     <string name="measure_one">Measure One</string>
     <string name="measure_two">Measure Two</string>
     <string name="measure_three">Measure Three</string>
+    <string name="measure_four">Measure Four</string>
+    <string name="measure_five">Measure Five</string>
+    <string name="measure_six">Measure Six</string>
+    <string name="measure_seven">Measure Seven</string>
 
     <string name="weight">Weight</string>
     <string name="pref_gender">Gender</string>
@@ -21,8 +25,9 @@
 
     <string name="placeholder_weight">200 lb</string>
     <string name="placeholder_bodyfat">15.3%</string>
-    <string name="placeholder_date">Date (12/12/2012)</string>
-    <string name="placeholder_time">10:30</string>
+    <string name="placeholder_date">Dec 12, 2012</string>
+    <string name="placeholder_time">10:30 AM</string>
+    <string name="at">at</string>
 
     <string-array name="measure_types_array">
         <item>3 Measure</item>

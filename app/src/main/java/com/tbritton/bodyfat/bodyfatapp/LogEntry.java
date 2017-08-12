@@ -1,5 +1,7 @@
 package com.tbritton.bodyfat.bodyfatapp;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 class LogEntry {
@@ -8,11 +10,11 @@ class LogEntry {
                     database_index;
     private String  sex;
     private Date    date;
-    private int[]   folds;
+    private ArrayList<Integer> folds;
     private double  weight,
                     bodyfat;
 
-    public LogEntry(int age, int[] folds, int foldtype, String sex, double weight, Date date, int index) {
+    public LogEntry(int age, ArrayList<Integer> folds, int foldtype, String sex, double weight, Date date, int index) {
         setup_basic_fields();
         this.date     = date;
         this.database_index = index;
@@ -26,7 +28,7 @@ class LogEntry {
     public LogEntry() {
         setup_basic_fields();
         this.date     = new Date();
-        int[] folds = {10, 10, 10};
+        ArrayList<Integer> folds = new ArrayList<>(Arrays.asList(10, 10, 10));
         this.folds    = folds;
         this.foldtype = 3;
         this.weight   = 200;
@@ -34,15 +36,17 @@ class LogEntry {
         calculate_bodyfat();
     }
 
-    public void set_folds(int[] folds) {
+    public void set_folds(ArrayList<Integer> folds) {
         this.folds = folds;
         calculate_bodyfat();
     }
 
     public void set_fold(int fold, int measure) {
-        this.folds[fold-1] = measure;
+        this.folds.set(fold-1, measure);
         calculate_bodyfat();
     }
+
+    public void set_foldtype(int foldtype) {this.foldtype = foldtype;}
 
     public void set_weight(double weight) {
         this.weight = weight;
@@ -61,7 +65,13 @@ class LogEntry {
         return foldtype;
     }
 
-    public int[] get_folds() {
+    public ArrayList<Integer> get_folds() {
+        ArrayList<Integer> folds;
+        try {
+            folds = this.folds;
+        } catch(NullPointerException e) {
+            folds = new ArrayList<>(Arrays.asList(10, 10, 10));
+        }
         return folds;
     }
 

@@ -28,7 +28,7 @@ public class DateFormatter {
 
     public static String get_display_datestring(Date date) {
         //Convert from long date to short date for readability
-        DateFormat format = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
+        DateFormat format = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
         //Set the timezone
         format.setTimeZone(SettingsHelper.get_timezone());
         return format.format(date);
