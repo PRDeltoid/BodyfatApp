@@ -13,7 +13,9 @@ public class DatePickerFragment extends DialogFragment
                             implements DatePickerDialog.OnDateSetListener {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        EntryViewActivity entry_view = (EntryViewActivity) getActivity();
         final Calendar c= Calendar.getInstance();
+        c.setTime(entry_view.log_entry.get_date());
         c.setTimeZone(SettingsHelper.get_timezone());
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);

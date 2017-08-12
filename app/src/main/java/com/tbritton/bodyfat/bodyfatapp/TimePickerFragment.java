@@ -15,6 +15,7 @@ public class TimePickerFragment extends DialogFragment
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Calendar calendar= Calendar.getInstance();
+        calendar.setTimeZone(SettingsHelper.get_timezone());
         return new TimePickerDialog(getActivity(), this, calendar.get(calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE), false);
     }
 
@@ -29,6 +30,7 @@ public class TimePickerFragment extends DialogFragment
         calendar.setTime(log_entry.get_date());
         calendar.set(calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(calendar.MINUTE, minute);
+        calendar.setTimeZone(SettingsHelper.get_timezone());
 
         //Update the log entry object with our new date
         Date date = calendar.getTime();
