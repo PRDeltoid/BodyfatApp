@@ -16,10 +16,12 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ListViewActivity extends AppCompatActivity {
     private ListView listview;
     private ArrayList<LogEntry> weight_log;
+    private ArrayList<Integer> checked_ids = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +53,14 @@ public class ListViewActivity extends AppCompatActivity {
         listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                listview.setItemChecked(position, true);
-                long item_list[] = listview.getCheckedItemIds();
-                //Toast.makeText(getApplicationContext(), item_list, Toast.LENGTH_SHORT).show();
-                /*if(Arrays.asList(listview.getCheckedItemIds()).contains(id)) {
-                    listview.setItemChecked(position, false);
-                    view.setBackgroundColor(Color.GRAY);
+                int i = (int) (long) id;
+                if(checked_ids.contains(i)) {
+                    checked_ids.remove(checked_ids.indexOf(i));
+                    view.setBackgroundColor(getResources().getColor(R.color.white));
                 } else {
-                    listview.setItemChecked(position, false);
-                    view.setBackgroundColor(Color.GREEN);
-                }*/
-                view.setBackgroundColor(Color.GREEN);
-
+                    checked_ids.add(i);
+                    view.setBackgroundColor(getResources().getColor(R.color.itemSelected));
+                }
                 return true;
             }
        });
