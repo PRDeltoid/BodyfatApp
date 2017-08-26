@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class ListViewActivity extends AppCompatActivity {
     private ListView listview;
     private ArrayList<LogEntry> weight_log;
-    private ActionMode action_mode;
+    private ArrayList<Integer> selected_entry_positions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +34,21 @@ public class ListViewActivity extends AppCompatActivity {
         //Pull our log data object
         populate_weight_log();
 
+        selected_entry_positions = new ArrayList<>();
+
         listview = (ListView) findViewById(R.id.list_view);
         listview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        //Multi-Select listener
         listview.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                if (checked==true)
-                    listview.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.itemSelected));
-                else
-                    listview.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.white));
+                if (checked) {
+                    selected_entry_positions.add(position);
+                    listview.getChildAt(position).setBackgroundResource(R.color.itemSelected);
+                } else {
+                    selected_entry_positions.remove(position);
+                    listview.getChildAt(position).setBackgroundResource(R.color.white);
+                }
             }
 
             @Override
@@ -63,8 +69,18 @@ public class ListViewActivity extends AppCompatActivity {
             // Called when the user selects a contextual menu item
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                BaseAdapter adapter = (BaseAdapter) listview.getAdapter();
                 switch (item.getItemId()) {
                     case R.id.action_delete:
+                        //Iterate through our selected items (listed by position in list)
+                        for(int position: selected_entry_positions) {
+                            //Grab the ID of our item via our adapter
+                            float id = adapter.getItemId(position);
+                            //Remove from the adapter list
+                            weight_log.remove(position);
+                            //Delete from DB
+                            LogDatabaseHelper.delete_entry(getApplicationContext(), Math.round(id));
+                        }
                         mode.finish(); // Action picked, so close the CAB
                         return true;
                     default:
@@ -75,7 +91,10 @@ public class ListViewActivity extends AppCompatActivity {
             // Called when the user exits the action mode
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                action_mode = null;
+                //refresh the log
+                BaseAdapter adapter = (BaseAdapter) listview.getAdapter();
+                adapter.notifyDataSetChanged();
+                reset_checked_items();
             }
         });
         listview.setLongClickable(true);
@@ -131,6 +150,13 @@ public class ListViewActivity extends AppCompatActivity {
         } catch(NullPointerException e) {
             weight_log = new ArrayList<>();
         }
+    }
+
+    private void reset_checked_items() {
+        for(int i=0; i < listview.getCount(); i++) {
+            listview.getChildAt(i).setBackgroundResource(R.color.white);
+        }
+        selected_entry_positions.clear();
     }
 
     private class ListViewAdapter extends BaseAdapter {
