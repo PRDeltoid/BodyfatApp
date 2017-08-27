@@ -118,7 +118,7 @@ import java.util.Date;
                 null,
                 null,
                 null,
-                null
+                LogContract.LogEntry.COLUMN_NAME_DATETIME + " desc"
         );
     }
 
