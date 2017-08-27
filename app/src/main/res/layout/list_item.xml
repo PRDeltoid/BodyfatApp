@@ -4,7 +4,8 @@
     android:layout_height="@dimen/list_item_height"
     android:paddingLeft="@dimen/list_item_side_padding"
     android:paddingRight="@dimen/list_item_side_padding"
-    android:paddingTop="@dimen/list_top_padding" >
+    android:paddingTop="@dimen/list_top_padding"
+    android:background="@drawable/select_deselect_transition">
 
     <TextView
         android:id="@+id/date"

@@ -2,6 +2,7 @@ package com.tbritton.bodyfat.bodyfatapp;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -44,10 +45,10 @@ public class ListViewActivity extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 if (checked) {
                     selected_entry_positions.add(position);
-                    listview.getChildAt(position).setBackgroundResource(R.color.itemSelected);
+                    ((TransitionDrawable) listview.getChildAt(position).getBackground()).startTransition(250);
                 } else {
                     selected_entry_positions.remove(position);
-                    listview.getChildAt(position).setBackgroundResource(R.color.white);
+                    ((TransitionDrawable) listview.getChildAt(position).getBackground()).reverseTransition(250);
                 }
             }
 
@@ -154,7 +155,12 @@ public class ListViewActivity extends AppCompatActivity {
 
     private void reset_checked_items() {
         for(int i=0; i < listview.getCount(); i++) {
-            listview.getChildAt(i).setBackgroundResource(R.color.white);
+            //Get our transitional background object from the current list item's view
+            TransitionDrawable transition = (TransitionDrawable) listview.getChildAt(i).getBackground();
+            //Start the transition back to unchecked
+            transition.startTransition(250);
+            //set our current transition state as our "default" to prevent re-transitioning in the multi-select listener
+            transition.resetTransition();
         }
         selected_entry_positions.clear();
     }
